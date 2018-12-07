@@ -1,0 +1,27 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.digital.dance.commons</groupId>
+        <artifactId>digital-dance-commons</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <groupId>com.digital.dance.framework</groupId>
+    <artifactId>super-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>super-parent</name>
+    <modules>
+        <module>com.digital.dance.framework</module>
+        <module>framework-identity-service</module>
+        <module>framework-identity-service-impl</module>
+        <module>digital-dance-commons</module>
+        <module>commons.utils</module>
+        <module>commons.exception</module>
+        <module>commons.beans</module>
+        <module>commons.constants</module>
+        <module>commons.security</module>
+        <module>commons.serialize</module>
+        <module>commons.net</module>
+        <module>document-business-service</module>
+    </modules>
+</project>

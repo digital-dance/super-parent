@@ -1,0 +1,65 @@
+﻿CREATE TABLE `sys_sequence` (
+   `NAME` VARCHAR(50) NOT NULL,
+   `CURRENT_VALUE` INT(11) NOT NULL DEFAULT '0',
+   `INCREMENT` INT(11) NOT NULL DEFAULT '1',
+   PRIMARY KEY (`NAME`)
+ );
+ 
+DELIMITER $$
+ 
+DROP FUNCTION IF EXISTS `currval`$$
+ 
+CREATE DEFINER=`root`@`%` FUNCTION `currval`(seq_name VARCHAR(50)) RETURNS INT(11)
+  BEGIN
+  /* sql server 要加上显式事务 开始 */
+    DECLARE VALUE INTEGER;
+    DECLARE pVALUE INTEGER;
+    SET VALUE=0;
+    SET pVALUE=-1;
+    SELECT current_value INTO pVALUE
+    FROM sys_sequence
+    WHERE NAME=seq_name;
+    IF(pVALUE=-1) THEN
+	INSERT sys_sequence(NAME, CURRENT_VALUE, INCREMENT) VALUE(seq_name, 0, 1);
+	SET VALUE=0;
+    ELSE
+	SET VALUE=pVALUE;
+    END IF;
+   
+    RETURN VALUE;
+    /* sql server 要加上显式事务 结束 */
+  END$$
+ 
+DELIMITER ;
+
+
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS `nextval`$$
+
+CREATE DEFINER=`root`@`%` FUNCTION `nextval`(seq_name VARCHAR(50)) RETURNS INT(11)
+  BEGIN
+  /* sql server 要加上显式事务 开始 */
+     UPDATE sys_sequence
+     SET CURRENT_VALUE = CURRENT_VALUE + INCREMENT
+     WHERE  NAME=seq_name;
+     RETURN currval(seq_name);
+     /* sql server 要加上显式事务 结束 */
+  END$$
+DELIMITER ;
+
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS `setval`$$
+
+CREATE DEFINER=`root`@`%` FUNCTION `setval`(seq_name VARCHAR(50),VALUE INTEGER) RETURNS INT(11)
+ BEGIN
+/* sql server 要加上显式事务 开始 */
+     UPDATE sys_sequence
+     SET current_value=VALUE
+     WHERE NAME=seq_name;
+     RETURN currval(seq_name);
+/* sql server 要加上显式事务 结束 */
+ END$$
+     
+DELIMITER ;

@@ -1,0 +1,23 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+		<groupId>com.digital.dance.commons</groupId>
+		<artifactId>digital-dance-commons</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <groupId>com.digital.dance.framework</groupId>
+  <artifactId>framework</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>framework</name>
+<modules>
+    <module>framework.redis</module>
+    <module>commons-exception</module>
+    <module>framework.codis</module>
+    <module>framework.codis.impl</module>
+    <module>framework.commons</module>
+    <module>framework.mq</module>
+    <module>framework.mq.impl</module>
+    <module>framework.sso</module>
+</modules>
+</project>
