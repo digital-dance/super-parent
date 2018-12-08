@@ -208,10 +208,11 @@ public class CodisImpl
     {
       public Void execute(JedisCommands jedis) {
 
-        if( (jedis instanceof JedisCluster) )
-            ((JedisCluster)jedis).subscribe(binaryJedisPubSub, channels);
-        else if( (jedis instanceof Jedis) )
-            ((Jedis)jedis).subscribe(binaryJedisPubSub, channels);
+        if( (jedis instanceof Jedis) )
+          ((Jedis)jedis).subscribe(binaryJedisPubSub, channels);
+        else if( (jedis instanceof JedisCluster) )
+          ((JedisCluster)jedis).subscribe(binaryJedisPubSub, channels);
+
         return null;
       }
     }.run(redisFactory);
