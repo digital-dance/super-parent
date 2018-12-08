@@ -12,6 +12,7 @@ import com.digital.dance.framework.redis.client.listener.MessageListener;
 import org.springframework.data.redis.core.TimeoutUtils;
 import redis.clients.jedis.BinaryJedisPubSub;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisCommands;
 
 import java.util.*;
@@ -193,7 +194,9 @@ public class CodisImpl
       public Void execute(JedisCommands jedis)
       {
         if(jedis instanceof Jedis)
-          ((Jedis)jedis).publish(GsonUtils.toJsonStr(channel), GsonUtils.toJsonStr(msg));
+            ((Jedis)jedis).publish(GsonUtils.toJsonStr(channel), GsonUtils.toJsonStr(msg));
+        else if(jedis instanceof JedisCluster)
+            ((JedisCluster)jedis).publish(GsonUtils.toJsonStr(channel), GsonUtils.toJsonStr(msg));
         return null;
       }
     }.run(redisFactory);
@@ -204,9 +207,11 @@ public class CodisImpl
     new JedisCommad<Object>()
     {
       public Void execute(JedisCommands jedis) {
-        if(!(jedis instanceof Jedis))
-          return null;
-        ((Jedis)jedis).subscribe(binaryJedisPubSub, channels);
+
+        if( (jedis instanceof JedisCluster) )
+            ((JedisCluster)jedis).subscribe(binaryJedisPubSub, channels);
+        else if( (jedis instanceof Jedis) )
+            ((Jedis)jedis).subscribe(binaryJedisPubSub, channels);
         return null;
       }
     }.run(redisFactory);
