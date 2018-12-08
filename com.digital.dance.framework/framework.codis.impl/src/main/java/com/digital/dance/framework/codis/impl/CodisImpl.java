@@ -204,6 +204,8 @@ public class CodisImpl
     new JedisCommad<Object>()
     {
       public Void execute(JedisCommands jedis) {
+        if(!(jedis instanceof Jedis))
+          return null;
         ((Jedis)jedis).subscribe(binaryJedisPubSub, channels);
         return null;
       }
@@ -225,6 +227,8 @@ public class CodisImpl
     return new JedisCommad<Set<String>>()
     {
       public Set<String> execute(JedisCommands jds) {
+        if(!(jds instanceof Jedis))
+          return null;
         Jedis jedis = null;
         boolean isBroken = false;
         try {
@@ -246,6 +250,8 @@ public class CodisImpl
     return new JedisCommad<Integer>()
     {
       public Integer execute(JedisCommands jds) {
+        if(!(jds instanceof Jedis))
+          return null;
         Jedis jedis = null;
         boolean isBroken = false;
         try {
@@ -267,6 +273,8 @@ public class CodisImpl
     new JedisCommad<Object>()
     {
       public Void execute(JedisCommands jds) {
+        if(!(jds instanceof Jedis))
+          return null;
         Jedis jedis = null;
         boolean isBroken = false;
         String[] keys = null;
@@ -308,6 +316,8 @@ public class CodisImpl
     return new JedisCommad<Boolean>()
     {
       public Boolean execute(JedisCommands jedis) {
+        if(!(jedis instanceof Jedis))
+          return null;
         Jedis jds = null;
         boolean isBroken = false;
         try {
@@ -333,6 +343,8 @@ public class CodisImpl
     return new JedisCommad<Boolean>()
     {
       public Boolean execute(JedisCommands jedis) {
+        if(!(jedis instanceof Jedis))
+          return null;
         Jedis jds = null;
         boolean isBroken = false;
         try {
@@ -359,6 +371,8 @@ public class CodisImpl
     new JedisCommad<Object>()
     {
       public Void execute(JedisCommands jds) {
+        if(!(jds instanceof Jedis))
+          return null;
         Jedis jedis = null;
         boolean isBroken = false;
         try {
@@ -383,6 +397,8 @@ public class CodisImpl
     return new JedisCommad<T>()
     {
       public T execute(JedisCommands jedis) {
+        if(!(jedis instanceof Jedis))
+          return null;
         Jedis jds = null;
         boolean isBroken = false;
         try {
@@ -413,6 +429,8 @@ public class CodisImpl
     new JedisCommad<Object>()
     {
       public Void execute(JedisCommands jedis) {
+        if(!(jedis instanceof Jedis))
+          return null;
         Jedis jds = null;
         boolean isBroken = false;
         try {
@@ -437,6 +455,8 @@ public class CodisImpl
     return new JedisCommad<Object>()
     {
       public Object execute(JedisCommands jedis) {
+        if(!(jedis instanceof Jedis))
+          return null;
         Jedis jds = null;
         boolean isBroken = false;
         try {
@@ -465,6 +485,8 @@ public class CodisImpl
     return new JedisCommad<Set<T>>()
     {
       public Set<T> execute(JedisCommands jedis) {
+        if(!(jedis instanceof Jedis))
+          return null;
         Jedis jds = null;
         boolean isBroken = false;
         try {
@@ -494,6 +516,8 @@ public class CodisImpl
     return new JedisCommad<Long>()
     {
       public Long execute(JedisCommands jedis) {
+        if(!(jedis instanceof Jedis))
+          return null;
         Jedis jds = null;
         boolean isBroken = false;
         try {
@@ -517,6 +541,8 @@ public class CodisImpl
     return new JedisCommad<Long>()
     {
       public Long execute(JedisCommands jedis) {
+        if(!(jedis instanceof Jedis))
+          return null;
         Jedis jds = null;
         boolean isBroken = false;
         try {
@@ -545,6 +571,8 @@ public class CodisImpl
     return new JedisCommad<String>()
     {
       public String execute(JedisCommands jedis) {
+        if(!(jedis instanceof Jedis))
+          return null;
         Jedis jds = null;
         boolean isBroken = false;
         try {
@@ -567,6 +595,8 @@ public class CodisImpl
     new JedisCommad<Object>()
     {
       public Void execute(JedisCommands jedis) {
+        if(!(jedis instanceof Jedis))
+          return null;
         Jedis jds = null;
         boolean isBroken = false;
         try {
@@ -588,6 +618,8 @@ public class CodisImpl
     return new JedisCommad<Set<String>>()
     {
       public Set<String> execute(JedisCommands jedis) {
+        if(!(jedis instanceof Jedis))
+          return null;
         Jedis jds = null;
         boolean isBroken = false;
         try {
@@ -611,6 +643,8 @@ public class CodisImpl
     new JedisCommad<Object>()
     {
       public Void execute(JedisCommands jedis) {
+        if(!(jedis instanceof Jedis))
+          return null;
         Jedis jds = null;
         boolean isBroken = false;
         try {
@@ -634,6 +668,8 @@ public class CodisImpl
     return new JedisCommad<List<T>>()
     {
       public List<T> execute(JedisCommands jedis) {
+        if(!(jedis instanceof Jedis))
+          return null;
         long len = getLenByList(listKey);
         List<T> lRB = getVByList(listKey, 0, (int)len, requiredType);
         return lRB;
@@ -646,6 +682,8 @@ public class CodisImpl
     new JedisCommad<Object>()
     {
       public Void execute(JedisCommands jedis) {
+        if(!(jedis instanceof Jedis))
+          return null;
         Jedis jds = null;
         boolean isBroken = false;
         try {
@@ -668,6 +706,8 @@ public class CodisImpl
     new JedisCommad<Object>()
     {
       public Void execute(JedisCommands jedis) {
+        if(!(jedis instanceof Jedis))
+          return null;
         Jedis jds = null;
         boolean isBroken = false;
         try {
@@ -696,6 +736,8 @@ public class CodisImpl
     return new JedisCommad<List<T>>()
     {
       public List<T> execute(JedisCommands jedis) {
+        if(!(jedis instanceof Jedis))
+          return null;
         Jedis jds = null;
         boolean isBroken = false;
         try {
@@ -725,6 +767,8 @@ public class CodisImpl
     return new JedisCommad<Long>()
     {
       public Long execute(JedisCommands jedis) {
+        if(!(jedis instanceof Jedis))
+          return null;
         Jedis jds = null;
         boolean isBroken = false;
         try {
@@ -748,6 +792,8 @@ public class CodisImpl
     return new JedisCommad<Long>()
     {
       public Long execute(JedisCommands jedis) {
+        if(!(jedis instanceof Jedis))
+          return null;
         Jedis jds = null;
         boolean isBroken = false;
         try {
@@ -774,6 +820,8 @@ public class CodisImpl
     return new JedisCommad<Boolean>()
     {
       public Boolean execute(JedisCommands jedis) {
+        if(!(jedis instanceof Jedis))
+          return null;
         Jedis jds = null;
         boolean isBroken = false;
         try {
