@@ -317,7 +317,25 @@
 			</dependency>
 			<dependency>
 				<groupId>com.digital.dance.commons</groupId>
+				<artifactId>commons.net</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.digital.dance.commons</groupId>
 				<artifactId>commons.security</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.digital.dance.commons</groupId>
+				<artifactId>commons.serialize</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.digital.dance.commons</groupId>
+				<artifactId>commons.utils</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			
@@ -332,6 +350,24 @@
 	            <artifactId>framework-identity-service</artifactId>
 	            <version>0.0.1-SNAPSHOT</version>
 			</dependency>
+
+			<dependency>
+				<groupId>com.digital.dance.framework.identity</groupId>
+				<artifactId>framework-identity-dao</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.digital.dance.framework.identity</groupId>
+				<artifactId>framework-identity-dao-impl</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.digital.dance.framework.identity</groupId>
+				<artifactId>framework-identity-impl</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
 			
 			<dependency>
 				<groupId>com.digital.dance.framework.identity</groupId>
@@ -341,7 +377,48 @@
 			<dependency>
 				<groupId>com.digital.dance.framework</groupId>
 				<artifactId>framework.infrastructure.commons</artifactId>
-				<classifier>pg</classifier>
+				<!--<classifier>pg</classifier>-->
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.digital.dance.framework</groupId>
+				<artifactId>framework.sso</artifactId>
+				<!--<classifier>pg</classifier>-->
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.digital.dance.framework</groupId>
+				<artifactId>framework.mq</artifactId>
+				<!--<classifier>pg</classifier>-->
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.digital.dance.framework</groupId>
+				<artifactId>framework.mq.impl</artifactId>
+				<!--<classifier>pg</classifier>-->
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.digital.dance.framework</groupId>
+				<artifactId>framework.redis</artifactId>
+				<!--<classifier>pg</classifier>-->
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.digital.dance.framework</groupId>
+				<artifactId>framework.codis</artifactId>
+				<!--<classifier>pg</classifier>-->
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.digital.dance.framework</groupId>
+				<artifactId>framework.codis.impl</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.digital.dance.framework</groupId>
+				<artifactId>commons.exception</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<!-- war -->

@@ -16,6 +16,7 @@ import javax.servlet.ServletException;
  */
 import javax.servlet.FilterConfig;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 public class XssFilter implements Filter {
 	Log log = new Log(XssFilter.class);
@@ -32,14 +33,27 @@ public class XssFilter implements Filter {
 
 		} catch (Throwable ex){
 			log.error(ex.getCause().getMessage(), ex);
+
+            Throwable rootException = ex;
+            while (rootException.getCause() != null) {
+                rootException = rootException.getCause();
+            }
+            String errorMsg = rootException.getMessage();
+            errorMsg = (errorMsg == null) ? "Exception：" + rootException.getClass().getName() : errorMsg;
+
+            xssRequest.setAttribute(rootException.getClass().getName() + ":error:", errorMsg);
+            xssRequest.setAttribute(rootException.getClass().getName() + ":exception:", ex);
+            ResponseVo responseVo = new ResponseVo();
+            responseVo.setCode(Constants.ReturnCode.FAILURE.Code());
+            responseVo.setMsg(errorMsg);
+            log.error(errorMsg, ex);
+            PrintWriter rsp = xssResponse.getWriter();
+            cfgHeader( xssRequest, xssResponse, xssChain );
+            responseOutput(GsonUtils.toJson(responseVo), rsp);
+            return;
 		}
 
-		((HttpServletResponse)xssResponse).setHeader("Access-Control-Allow-Origin", "*");
-		((HttpServletResponse)xssResponse).setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, PATCH");
-		((HttpServletResponse)xssResponse).setHeader("Access-Control-Allow-Headers", "Origin, No-Cache, X-Requested-With, If-Modified-Since, Pragma, Last-Modified, Cache-Control, Expires, Content-Type, X-E4M-With, Access-Control-Allow-Origin, Access-Control-Allow-Methods, X-Auth-Token, Access-Control-Allow-Credientials");
-		((HttpServletResponse)xssResponse).setHeader("Access-Control-Expose-Headers", "X-Auth-Token");
-		//((HttpServletResponse)response).setHeader("Access-Control-Allow-Headers", "X-Custom-Header");
-		//((HttpServletResponse)response).setHeader("Access-Control-Allow-Credientials", "true");
+        cfgHeader( xssRequest, xssResponse, xssChain );
 		String scheme = xssRequest.getScheme();
         String serverName = xssRequest.getServerName();
         int port = xssRequest.getServerPort();
@@ -49,7 +63,37 @@ public class XssFilter implements Filter {
         xssRequest.setAttribute("baseUrl", basePath);
 	}
 
-	@Override
+	private void cfgHeader(ServletRequest xssRequest, ServletResponse xssResponse, FilterChain xssChain){
+        ((HttpServletResponse)xssResponse).setHeader("Access-Control-Allow-Origin", "*");
+        ((HttpServletResponse)xssResponse).setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, PATCH");
+        ((HttpServletResponse)xssResponse).setHeader("Access-Control-Allow-Headers", "Origin, SESSION, Cookie, Set-Cookie, No-Cache, X-Requested-With, If-Modified-Since, Pragma, Last-Modified, Cache-Control, Expires, Content-Type, X-E4M-With, Access-Control-Allow-Origin, Access-Control-Allow-Methods, X-Auth-Token, Access-Control-Allow-Credientials");
+        ((HttpServletResponse)xssResponse).setHeader("Access-Control-Expose-Headers", "X-Auth-Token");
+        //((HttpServletResponse)response).setHeader("Access-Control-Allow-Headers", "X-Custom-Header");
+        ((HttpServletResponse)xssResponse).setHeader("Access-Control-Allow-Credientials", "true");
+    }
+
+    private void responseOutput(String data, PrintWriter rsp) {
+        Throwable localThrowable0 = null;
+        try {
+            rsp.write(data);
+        } catch (Throwable localThrowable) {
+            localThrowable0 = localThrowable;
+            log.error(localThrowable0.getMessage(), localThrowable0);
+            throw localThrowable;
+        } finally {
+            if (rsp != null)
+
+                try {
+                    rsp.close();
+                } catch (Throwable x2) {
+                    if (localThrowable0 != null)
+                        localThrowable0.addSuppressed(x2);
+                    log.error(localThrowable0.getMessage(), localThrowable0);
+                }
+        }
+    }
+
+    @Override
 	public void destroy() {
 		xssFilterConfig = null;
 	}

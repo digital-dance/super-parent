@@ -33,10 +33,10 @@ public class ControllerInterceptor  extends HandlerInterceptorAdapter {
 		//request.setAttribute("basePath",request.getContextPath());
 		response.setHeader("Access-Control-Allow-Origin", "*");
 		response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, PATCH");
-		response.setHeader("Access-Control-Allow-Headers", "Origin, No-Cache, X-Requested-With, If-Modified-Since, Pragma, Last-Modified, Cache-Control, Expires, Content-Type, X-E4M-With, Access-Control-Allow-Origin, Access-Control-Allow-Methods, X-Auth-Token, Access-Control-Allow-Credientials");
+		response.setHeader("Access-Control-Allow-Headers", "Origin, No-Cache, SESSION, Cookie, Set-Cookie, X-Requested-With, If-Modified-Since, Pragma, Last-Modified, Cache-Control, Expires, Content-Type, X-E4M-With, Access-Control-Allow-Origin, Access-Control-Allow-Methods, X-Auth-Token, Access-Control-Allow-Credientials");
 		response.setHeader("Access-Control-Expose-Headers", "X-Auth-Token");
 		//response.setHeader("Access-Control-Allow-Headers", "X-Custom-Header");
-		//response.setHeader("Access-Control-Allow-Credientials", "true");
+		response.setHeader("Access-Control-Allow-Credientials", "true");
 		return true;
 	}
 

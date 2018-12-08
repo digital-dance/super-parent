@@ -126,10 +126,11 @@ public class SSOLoginFilter implements Filter {
 		
 		HttpServletResponse response = (HttpServletResponse) rep;
 		//begin
-		((HttpServletResponse)response).setHeader("Access-Control-Allow-Origin", "*");
-		((HttpServletResponse)response).setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, PATCH");
-		((HttpServletResponse)response).setHeader("Access-Control-Allow-Headers", "Origin, No-Cache, X-Requested-With, If-Modified-Since, Pragma, Last-Modified, Cache-Control, Expires, Content-Type, X-E4M-With, Access-Control-Allow-Origin, Access-Control-Allow-Methods, X-Auth-Token, Access-Control-Allow-Credientials");
-		((HttpServletResponse)response).setHeader("Access-Control-Expose-Headers", "X-Auth-Token");
+		(response).setHeader("Access-Control-Allow-Origin", "*");
+		(response).setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, PATCH");
+		(response).setHeader("Access-Control-Allow-Headers", "Origin, SESSION, Cookie, Set-Cookie, No-Cache, X-Requested-With, If-Modified-Since, Pragma, Last-Modified, Cache-Control, Expires, Content-Type, X-E4M-With, Access-Control-Allow-Origin, Access-Control-Allow-Methods, X-Auth-Token, Access-Control-Allow-Credientials");
+		(response).setHeader("Access-Control-Expose-Headers", "X-Auth-Token");
+		response.setHeader("Access-Control-Allow-Credientials", "true");
 		//end
 		response.setHeader("Content-type", "text/html;charset=UTF-8");
 		response.setCharacterEncoding("UTF-8");
@@ -193,7 +194,7 @@ public class SSOLoginFilter implements Filter {
 			String fakeToken = request.getParameter("fakeToken");
 			try {
 				if(StringUtils.isNotEmpty(fakeToken)){
-					fakeToken = URLDecoder.decode(fakeToken, "UTF-8");
+//					fakeToken = URLDecoder.decode(fakeToken, "UTF-8");
 					tokenJson = RSACoderUtil.decryptByPublicKey(pubKey, fakeToken);
 					loginInfo = (LoginInfo) JSONUtils.toObject(tokenJson, LoginInfo.class);
 					LoginContext.setLoginInfo(loginInfo);
@@ -210,7 +211,7 @@ public class SSOLoginFilter implements Filter {
 			try {
 				ResponseVo responseVo = new ResponseVo();
 				if( StringUtils.isNotBlank( token ) ){
-					token = URLDecoder.decode(token, "UTF-8");
+//					token = URLDecoder.decode(token, "UTF-8");
 							//TO DO validationToken begin
 					Map<String, String> pMap = new HashMap<String, String>();
 					pMap.put("token", token);
