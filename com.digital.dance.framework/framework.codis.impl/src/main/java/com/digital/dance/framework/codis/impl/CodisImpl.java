@@ -25,13 +25,17 @@ public class CodisImpl
   private RedisFactory redisFactory;
   private String salt;
 
+  public String buildKey(String key){
+    return GsonUtils.toJsonStr(CodisImpl.this.salt + key);
+  }
+
   public void set(final String key, final Object value)
   {
     new JedisCommad<Object>()
     {
       public String execute(JedisCommands jedis)
       {
-        jedis.set(GsonUtils.toJsonStr(CodisImpl.this.salt + key), GsonUtils.toJsonStr(value));
+        jedis.set(buildKey( key ), GsonUtils.toJsonStr(value));
         return null;
       }
     }.run(redisFactory);
@@ -43,7 +47,7 @@ public class CodisImpl
     {
       public Void execute(JedisCommands jedis)
       {
-        jedis.setnx(GsonUtils.toJsonStr(CodisImpl.this.salt + key), GsonUtils.toJsonStr(value));
+        jedis.setnx(buildKey( key ), GsonUtils.toJsonStr(value));
         return null;
       }
     }.run(redisFactory);
@@ -56,7 +60,7 @@ public class CodisImpl
       public Void execute(JedisCommands jedis)
       {
         Number secondsNum = Long.valueOf(seconds);
-        jedis.setex(GsonUtils.toJsonStr(CodisImpl.this.salt + key), secondsNum.intValue(), GsonUtils.toJsonStr(value));
+        jedis.setex(buildKey( key ), secondsNum.intValue(), GsonUtils.toJsonStr(value));
         return null;
       }
     }.run(redisFactory);
@@ -67,7 +71,7 @@ public class CodisImpl
     new JedisCommad<Object>()
     {
       public Void execute(JedisCommands jedis) {
-        jedis.hset(GsonUtils.toJsonStr(CodisImpl.this.salt + key), GsonUtils.toJsonStr(CodisImpl.this.salt + field), GsonUtils.toJsonStr(value));
+        jedis.hset(buildKey( key ), GsonUtils.toJsonStr(CodisImpl.this.salt + field), GsonUtils.toJsonStr(value));
         return null;
       }
     }.run(redisFactory);
@@ -78,7 +82,7 @@ public class CodisImpl
     return new JedisCommad<T>()
     {
       public T execute(JedisCommands jedis) {
-        String bytes = jedis.get(GsonUtils.toJsonStr(CodisImpl.this.salt + key));
+        String bytes = jedis.get(buildKey( key ));
         return GsonUtils.toObject(bytes, clazz);
       }
     }.run(redisFactory);
@@ -90,7 +94,7 @@ public class CodisImpl
     {
       public T execute(JedisCommands jedis)
       {
-        String bytes = jedis.get(GsonUtils.toJsonStr(CodisImpl.this.salt + key));
+        String bytes = jedis.get(buildKey( key ));
         return GsonUtils.toObject(bytes, clazz);
       }
     }.run(redisFactory);
@@ -102,7 +106,7 @@ public class CodisImpl
     {
       public T execute(JedisCommands jedis)
       {
-        String bytes = jedis.get(GsonUtils.toJsonStr(CodisImpl.this.salt + key));
+        String bytes = jedis.get(buildKey( key ));
         return GsonUtils.toObject(bytes, clazz);
       }
     }.run(redisFactory);
@@ -115,7 +119,7 @@ public class CodisImpl
       public Long execute(JedisCommands jedis)
       {
         Number secondsNum = Long.valueOf(seconds);
-        jedis.expire(GsonUtils.toJsonStr(CodisImpl.this.salt + key), secondsNum.intValue());
+        jedis.expire(buildKey( key ), secondsNum.intValue());
         return null;
       }
     }.run(redisFactory);
@@ -127,7 +131,7 @@ public class CodisImpl
     {
       public Long execute(JedisCommands jedis)
       {
-        return jedis.del(GsonUtils.toJsonStr(CodisImpl.this.salt + key));
+        return jedis.del(buildKey( key ));
       }
     }.run(redisFactory);
   }
@@ -138,7 +142,7 @@ public class CodisImpl
     {
       public Long execute(JedisCommands jedis)
       {
-        return jedis.hdel(GsonUtils.toJsonStr(CodisImpl.this.salt + key), new String[] { GsonUtils.toJsonStr(CodisImpl.this.salt + field) });
+        return jedis.hdel(buildKey( key ), new String[] { GsonUtils.toJsonStr(CodisImpl.this.salt + field) });
       }
     }.run(redisFactory);
   }
@@ -149,7 +153,7 @@ public class CodisImpl
     {
       public Long execute(JedisCommands jedis)
       {
-        return jedis.lpushx(GsonUtils.toJsonStr(CodisImpl.this.salt + key), new String[] { GsonUtils.toJsonStr(value) });
+        return jedis.lpushx(buildKey( key ), new String[] { GsonUtils.toJsonStr(value) });
       }
     }.run(redisFactory);
   }
@@ -160,7 +164,7 @@ public class CodisImpl
     {
       public Long execute(JedisCommands jedis)
       {
-        return jedis.rpushx(GsonUtils.toJsonStr(CodisImpl.this.salt + key), new String[] { GsonUtils.toJsonStr(value) });
+        return jedis.rpushx(buildKey( key ), new String[] { GsonUtils.toJsonStr(value) });
       }
     }.run(redisFactory);
   }
@@ -171,7 +175,7 @@ public class CodisImpl
     {
       public String execute(JedisCommands jedis)
       {
-        return new String(jedis.lpop(GsonUtils.toJsonStr(CodisImpl.this.salt + key)));
+        return new String(jedis.lpop(buildKey( key )));
       }
     }.run(redisFactory);
   }
@@ -182,7 +186,7 @@ public class CodisImpl
     {
       public String execute(JedisCommands jedis)
       {
-        return new String(jedis.rpop(GsonUtils.toJsonStr(CodisImpl.this.salt + key)));
+        return new String(jedis.rpop(buildKey( key )));
       }
     }.run(redisFactory);
   }
@@ -239,7 +243,7 @@ public class CodisImpl
         boolean isBroken = false;
         try {
           jedis = ((Jedis)jds);
-          Set<String> set = jedis.keys(prefix +"*");
+          Set<String> set = jedis.keys(prefix + "*");
           return set;
         } catch (Exception e) {
           isBroken = true;
@@ -262,7 +266,7 @@ public class CodisImpl
         boolean isBroken = false;
         try {
           jedis = ((Jedis)jds);
-          Set<String> set = jedis.keys("*" + prefix +"*");
+          Set<String> set = jedis.keys("*" + prefix + "*");
           return set == null ? 0 : set.size();
         } catch (Exception e) {
           isBroken = true;
@@ -318,7 +322,7 @@ public class CodisImpl
   }
 
   @Override
-  public <K> Boolean expire(final K key, final int timeout, final TimeUnit unit) {
+  public <K> Boolean expire(final String key, final int timeout, final TimeUnit unit) {
     return new JedisCommad<Boolean>()
     {
       public Boolean execute(JedisCommands jedis) {
@@ -329,7 +333,7 @@ public class CodisImpl
         try {
           jds = ((Jedis)jedis);
           jds.select(0);
-          byte[] skey = SerializeUtil.serialize(key);
+          byte[] skey = SerializeUtil.serialize(buildKey( key ));
           long rawTimeout = TimeoutUtils.toSeconds(timeout, unit);
           //jds.expire(skey, (int)rawTimeout);
           jds.pexpire(skey, rawTimeout);
@@ -345,7 +349,7 @@ public class CodisImpl
   }
 
   @Override
-  public <K> Boolean expire(final K key, final long milliseconds) {
+  public <K> Boolean expire(final String key, final int milliseconds) {
     return new JedisCommad<Boolean>()
     {
       public Boolean execute(JedisCommands jedis) {
@@ -671,16 +675,10 @@ public class CodisImpl
 
   @Override
   public <T> List<T> getVByListKey(final String listKey, final Class<T> requiredType) {
-    return new JedisCommad<List<T>>()
-    {
-      public List<T> execute(JedisCommands jedis) {
-        if(!(jedis instanceof Jedis))
-          return null;
-        long len = getLenByList(listKey);
-        List<T> lRB = getVByList(listKey, 0, (int)len, requiredType);
-        return lRB;
-      }
-    }.run(redisFactory);
+
+      long len = getLenByList(listKey);
+      List<T> lRB = getVByList(listKey, 0, (int)len, requiredType);
+      return lRB;
   }
 
   @Override

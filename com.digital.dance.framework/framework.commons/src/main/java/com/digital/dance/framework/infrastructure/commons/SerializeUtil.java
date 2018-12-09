@@ -59,7 +59,7 @@ public class SerializeUtil {
         return deserialize(in, Object.class);
     }
 
-    public static <T> T deserialize(byte[] in, Class<T>...requiredType) {
+    public static <T> T deserialize(byte[] in, Class<T> requiredType) {
         Object rv = null;
         ByteArrayInputStream bis = null;
         ObjectInputStream is = null;

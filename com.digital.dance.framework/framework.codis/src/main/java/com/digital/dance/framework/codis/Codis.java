@@ -11,8 +11,8 @@ public interface Codis extends Redis{
     public Integer getKeysCountByPrefix(String prefix);
     public void delKeysByPrefix(String prefix);
 
-    public <K> Boolean expire(K key, int timeout, final TimeUnit unit);
-    public <K> Boolean expire(K key, long milliseconds);
+    public <K> Boolean expire(String key, int timeout, final TimeUnit unit);
+    public <K> Boolean expire(String key, int milliseconds);
     public void expire(int dbIndex, byte[] key, int expireTime);
     public <T> T getVByMap(String mapkey,String key , Class<T> requiredType);
     public void setVByMap(String mapkey,String key ,Object value);

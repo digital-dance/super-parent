@@ -367,8 +367,9 @@
 				<groupId>com.digital.dance.framework.identity</groupId>
 				<artifactId>framework-identity-impl</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
+
 			</dependency>
-			
+
 			<dependency>
 				<groupId>com.digital.dance.framework.identity</groupId>
 				<artifactId>framework-identity-commons</artifactId>
@@ -596,13 +597,13 @@
 		<repository>
 			<id>maven-releases</id>
 			<name>Internal Releases</name>
-			<url>http://16.173.235.6:8081/repository/maven-releases</url>
+			<url>http://127.0.0.1:8081/repository/maven-releases</url>
 		</repository>
 		
 		<snapshotRepository>
 			<id>maven-snapshots</id>
 			<name>Internal Snapshots</name>
-			<url>http://16.173.235.6:8081/repository/maven-snapshots</url>
+			<url>http://127.0.0.1:8081/repository/maven-snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 
