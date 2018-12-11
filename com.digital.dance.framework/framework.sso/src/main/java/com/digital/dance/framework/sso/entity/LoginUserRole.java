@@ -9,6 +9,25 @@ public class LoginUserRole {
 	private String userCategory;
 	private String userMobile; 
 	private String roleName ;
+	private String orgId;
+	private String departmentId;
+
+	public String getDepartmentId() {
+		return departmentId;
+	}
+
+	public void setDepartmentId(String departmentId) {
+		this.departmentId = departmentId;
+	}
+
+	public String getOrgId() {
+		return orgId;
+	}
+
+	public void setOrgId(String orgId) {
+		this.orgId = orgId;
+	}
+
 	/**
 	 * @return the userId
 	 */

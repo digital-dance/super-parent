@@ -474,6 +474,18 @@ public class SSOLoginFilter implements Filter {
 		if(appSession != null) appSession.setAttribute("login_info", loginInfo);
 	}
 
+	public static <T extends Object> T getFromSession(HttpServletRequest request, String key) {
+		HttpSession appSession = request.getSession();
+		Object object = (appSession != null) ? appSession.getAttribute(key) : null;
+		if(object == null)return null;
+		return (T)object;
+	}
+
+	public static <T extends Object> void save2Session(HttpServletRequest request, String key, T t) {
+		HttpSession appSession = request.getSession();
+		if(appSession != null) appSession.setAttribute(key, t);
+	}
+
 	public void destroy() {
 	}
 }

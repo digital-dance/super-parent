@@ -290,7 +290,7 @@ public class CodisImpl
         String[] keys = null;
         int i = 0;
         try {
-          jds = ((Jedis)jedis);
+          jedis = ((Jedis)jds);
           Set<String> set = jedis.keys("*" + prefix + "*");
           Iterator<String> it = set.iterator();
 
