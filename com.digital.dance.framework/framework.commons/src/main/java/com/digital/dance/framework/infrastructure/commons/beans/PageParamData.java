@@ -13,13 +13,14 @@ public class PageParamData<T> implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -3380887473513945943L;
-	private Integer pageIndex;
-	private Integer size;
+	protected static final long serialVersionUID = -3380887473513945943L;
+	protected Integer pageIndex;
+	protected Integer pageSize;
+	protected Integer offsetNum;
 	private T pageData;
 
 	public Integer getPageIndex() {
-		return this.pageIndex;
+		return (pageIndex == null ? 0 : pageIndex);
 	}
 
 	public void setPageIndex(Integer pageIndex) {
@@ -27,11 +28,25 @@ public class PageParamData<T> implements Serializable {
 	}
 
 	public Integer getPageSize() {
-		return this.size;
+		return (pageSize == null ? 0 : pageSize);
 	}
 
 	public void setPageSize(Integer pageSize) {
-		this.size = pageSize;
+		this.pageSize = pageSize;
+	}
+
+	/**
+	 * @return the offsetNum
+	 */
+	public Integer getOffsetNum() {
+		this.offsetNum = (pageIndex == null ? 0 : pageIndex) * (pageSize == null ? 0 : pageSize);
+		return this.offsetNum;
+	}
+	/**
+	 * @param offsetNum the offsetNum to set
+	 */
+	public void setOffsetNum(Integer offsetNum) {
+		this.offsetNum = (pageIndex == null ? 0 : pageIndex) * (pageSize == null ? 0 : pageSize);
 	}
 
 	public T getPageData() {

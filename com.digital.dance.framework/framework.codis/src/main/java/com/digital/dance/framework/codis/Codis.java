@@ -13,7 +13,7 @@ public interface Codis extends Redis{
 
     public <K> Boolean expire(String key, int timeout, final TimeUnit unit);
     public <K> Boolean expire(String key, int milliseconds);
-    public void expire(int dbIndex, byte[] key, int expireTime);
+    public void expire(int dbIndex, String key, int expireTime);
     public <T> T getVByMap(String mapkey,String key , Class<T> requiredType);
     public void setVByMap(String mapkey,String key ,Object value);
 
@@ -34,7 +34,7 @@ public interface Codis extends Redis{
      * @param requiredType
      * @return
      */
-    public <T> Set<T> getVByList(String setKey,Class<T> requiredType);
+    public <T> Set<T> getVByList(String setKey, Class<T> requiredType);
 
     /**
      * 获取Set长度

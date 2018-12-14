@@ -1,16 +1,52 @@
 package com.digital.dance.framework.sso.entity;
 
+import java.util.Date;
+
 public class LoginUserRole {
 	private String userId ; 
 	private String roleId ;
 	private String userName;
-	private String userDisplayName;
-	private String userEmail;
-	private String userCategory;
-	private String userMobile; 
+//	private String userDisplayName;
+//	private String userEmail;
+//	private String userCategory;
+//	private String userMobile;
 	private String roleName ;
 	private String orgId;
 	private String departmentId;
+
+	private String sysUserRoleId;
+
+	private String sysOrgRoleId;
+
+//	private String userId;
+//
+//	private String userName;
+
+	private String password;
+
+	private String email;
+
+	private String phone;
+
+	private Boolean rolePrivilegeInd;
+
+//	private String orgId;
+//
+//	private String departmentId;
+//
+//	private String roleId;
+//
+//	private String userId;
+
+	private Integer state;
+
+	private Date insertOn;
+
+	private String insertBy;
+
+	private Date updateOn;
+
+	private String updateBy;
 
 	public String getDepartmentId() {
 		return departmentId;
@@ -64,54 +100,7 @@ public class LoginUserRole {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-	/**
-	 * @return the userDisplayName
-	 */
-	public String getUserDisplayName() {
-		return userDisplayName;
-	}
-	/**
-	 * @param userDisplayName the userDisplayName to set
-	 */
-	public void setUserDisplayName(String userDisplayName) {
-		this.userDisplayName = userDisplayName;
-	}
-	/**
-	 * @return the userEmail
-	 */
-	public String getUserEmail() {
-		return userEmail;
-	}
-	/**
-	 * @param userEmail the userEmail to set
-	 */
-	public void setUserEmail(String userEmail) {
-		this.userEmail = userEmail;
-	}
-	/**
-	 * @return the userCategory
-	 */
-	public String getUserCategory() {
-		return userCategory;
-	}
-	/**
-	 * @param userCategory the userCategory to set
-	 */
-	public void setUserCategory(String userCategory) {
-		this.userCategory = userCategory;
-	}
-	/**
-	 * @return the userMobile
-	 */
-	public String getUserMobile() {
-		return userMobile;
-	}
-	/**
-	 * @param userMobile the userMobile to set
-	 */
-	public void setUserMobile(String userMobile) {
-		this.userMobile = userMobile;
-	}
+
 	/**
 	 * @return the roleName
 	 */
@@ -124,4 +113,93 @@ public class LoginUserRole {
 	public void setRoleName(String roleName) {
 		this.roleName = roleName;
 	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password == null ? null : password.trim();
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email == null ? null : email.trim();
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone == null ? null : phone.trim();
+	}
+
+	public Boolean getRolePrivilegeInd() {
+		return rolePrivilegeInd;
+	}
+
+	public void setRolePrivilegeInd(Boolean rolePrivilegeInd) {
+		this.rolePrivilegeInd = rolePrivilegeInd;
+	}
+
+	public String getSysUserRoleId() {
+		return sysUserRoleId;
+	}
+
+	public void setSysUserRoleId(String sysUserRoleId) {
+		this.sysUserRoleId = sysUserRoleId == null ? null : sysUserRoleId.trim();
+	}
+
+	public String getSysOrgRoleId() {
+		return sysOrgRoleId;
+	}
+
+	public void setSysOrgRoleId(String sysOrgRoleId) {
+		this.sysOrgRoleId = sysOrgRoleId == null ? null : sysOrgRoleId.trim();
+	}
+
+	public Integer getState() {
+		return state;
+	}
+
+	public void setState(Integer state) {
+		this.state = state;
+	}
+
+	public Date getInsertOn() {
+		return insertOn;
+	}
+
+	public void setInsertOn(Date insertOn) {
+		this.insertOn = insertOn;
+	}
+
+	public String getInsertBy() {
+		return insertBy;
+	}
+
+	public void setInsertBy(String insertBy) {
+		this.insertBy = insertBy == null ? null : insertBy.trim();
+	}
+
+	public Date getUpdateOn() {
+		return updateOn;
+	}
+
+	public void setUpdateOn(Date updateOn) {
+		this.updateOn = updateOn;
+	}
+
+	public String getUpdateBy() {
+		return updateBy;
+	}
+
+	public void setUpdateBy(String updateBy) {
+		this.updateBy = updateBy == null ? null : updateBy.trim();
+	}
+
 }

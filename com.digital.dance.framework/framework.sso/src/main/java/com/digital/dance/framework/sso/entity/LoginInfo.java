@@ -16,9 +16,25 @@ public class LoginInfo implements Serializable {
 	private String userId;
 	private String userName;
 	private String userDisplayName;
-	private String userEmail;
+//	private String userEmail;
 	private String userCategory;
 	private String userMobile;
+
+	private String email;
+
+	private String phone;
+
+	private Boolean rolePrivilegeInd;
+
+	private Integer state;
+
+	private Date insertOn;
+
+	private String insertBy;
+
+	private Date updateOn;
+
+	private String updateBy;
 	private List<LoginUserRole> userRoles;
 
 	private String openId;
@@ -26,10 +42,6 @@ public class LoginInfo implements Serializable {
 	private String orgCode;
 	// 密码
 	private String password;
-	// 创建时间
-	private Date createTime;
-	// 修改时间
-	private Date updateTime;
 
 	// 短信验证码
 	private String validCode;
@@ -42,7 +54,7 @@ public class LoginInfo implements Serializable {
 
 	public Timestamp getTokenTimestamp() {
 		this.tokenTimestamp = new Timestamp(new Date().getTime());
-		return tokenTimestamp;
+		return this.tokenTimestamp;
 	}
 
 	public void setTokenTimestamp(Timestamp tokenTimestamp) {
@@ -134,20 +146,6 @@ public class LoginInfo implements Serializable {
 	}
 
 	/**
-	 * @return the userEmail
-	 */
-	public String getUserEmail() {
-		return userEmail;
-	}
-
-	/**
-	 * @param userEmail the userEmail to set
-	 */
-	public void setUserEmail(String userEmail) {
-		this.userEmail = userEmail;
-	}
-
-	/**
 	 * @return the userCategory
 	 */
 	public String getUserCategory() {
@@ -232,34 +230,6 @@ public class LoginInfo implements Serializable {
 	}
 
 	/**
-	 * @return the createTime
-	 */
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	/**
-	 * @param createTime the createTime to set
-	 */
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-
-	/**
-	 * @return the updateTime
-	 */
-	public Date getUpdateTime() {
-		return updateTime;
-	}
-
-	/**
-	 * @param updateTime the updateTime to set
-	 */
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
-	}
-
-	/**
 	 * @return the validCode
 	 */
 	public String getValidCode() {
@@ -313,6 +283,70 @@ public class LoginInfo implements Serializable {
 	 */
 	public void setUserRoles(List<LoginUserRole> userRoles) {
 		this.userRoles = userRoles;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email == null ? null : email.trim();
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone == null ? null : phone.trim();
+	}
+
+	public Boolean getRolePrivilegeInd() {
+		return rolePrivilegeInd == null ? true : rolePrivilegeInd;
+	}
+
+	public void setRolePrivilegeInd(Boolean rolePrivilegeInd) {
+		this.rolePrivilegeInd = rolePrivilegeInd;
+	}
+
+	public Integer getState() {
+		return state;
+	}
+
+	public void setState(Integer state) {
+		this.state = state;
+	}
+
+	public Date getInsertOn() {
+		return insertOn;
+	}
+
+	public void setInsertOn(Date insertOn) {
+		this.insertOn = insertOn;
+	}
+
+	public String getInsertBy() {
+		return insertBy;
+	}
+
+	public void setInsertBy(String insertBy) {
+		this.insertBy = insertBy == null ? null : insertBy.trim();
+	}
+
+	public Date getUpdateOn() {
+		return updateOn;
+	}
+
+	public void setUpdateOn(Date updateOn) {
+		this.updateOn = updateOn;
+	}
+
+	public String getUpdateBy() {
+		return updateBy;
+	}
+
+	public void setUpdateBy(String updateBy) {
+		this.updateBy = updateBy == null ? null : updateBy.trim();
 	}
 
 }

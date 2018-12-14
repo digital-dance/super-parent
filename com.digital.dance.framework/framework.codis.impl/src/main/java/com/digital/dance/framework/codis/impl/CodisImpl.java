@@ -2,18 +2,13 @@ package com.digital.dance.framework.codis.impl;
 
 import com.digital.dance.framework.codis.Codis;
 import com.digital.dance.framework.codis.client.RedisFactory;
-import com.digital.dance.framework.codis.impl.client.JedisCommad;
+import com.digital.dance.framework.codis.impl.client.JedisCommand;
 import com.digital.dance.framework.infrastructure.commons.GsonUtils;
 import com.digital.dance.framework.infrastructure.commons.Log;
-import com.digital.dance.framework.infrastructure.commons.SerializeUtil;
 import com.digital.dance.framework.infrastructure.commons.StringTools;
-import com.digital.dance.framework.redis.client.listener.MessageListener;
 
 import org.springframework.data.redis.core.TimeoutUtils;
-import redis.clients.jedis.BinaryJedisPubSub;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisCluster;
-import redis.clients.jedis.JedisCommands;
+import redis.clients.jedis.*;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +26,7 @@ public class CodisImpl
 
   public void set(final String key, final Object value)
   {
-    new JedisCommad<Object>()
+    new JedisCommand<Object>()
     {
       public String execute(JedisCommands jedis)
       {
@@ -43,7 +38,7 @@ public class CodisImpl
 
   public void setnx(final String key, final Object value)
   {
-    new JedisCommad<Object>()
+    new JedisCommand<Object>()
     {
       public Void execute(JedisCommands jedis)
       {
@@ -55,7 +50,7 @@ public class CodisImpl
 
   public void setex(final String key, final long seconds, final Object value)
   {
-    new JedisCommad<Object>()
+    new JedisCommand<Object>()
     {
       public Void execute(JedisCommands jedis)
       {
@@ -68,7 +63,7 @@ public class CodisImpl
 
   public void hset(final String key, final String field, final Object value)
   {
-    new JedisCommad<Object>()
+    new JedisCommand<Object>()
     {
       public Void execute(JedisCommands jedis) {
         jedis.hset(buildKey( key ), GsonUtils.toJsonStr(CodisImpl.this.salt + field), GsonUtils.toJsonStr(value));
@@ -79,7 +74,7 @@ public class CodisImpl
 
   public <T> T getSet(final String key, final Class<T> clazz)
   {
-    return new JedisCommad<T>()
+    return new JedisCommand<T>()
     {
       public T execute(JedisCommands jedis) {
         String bytes = jedis.get(buildKey( key ));
@@ -90,7 +85,7 @@ public class CodisImpl
 
   public <T> T get(final String key, final Class<T> clazz)
   {
-    return new JedisCommad<T>()
+    return new JedisCommand<T>()
     {
       public T execute(JedisCommands jedis)
       {
@@ -102,7 +97,7 @@ public class CodisImpl
 
   public <T> T hgetObject(final String key, String field, final Class<T> clazz)
   {
-    return new JedisCommad<T>()
+    return new JedisCommand<T>()
     {
       public T execute(JedisCommands jedis)
       {
@@ -114,7 +109,7 @@ public class CodisImpl
 
   public Long expire(final String key, final long seconds)
   {
-    return (Long) new JedisCommad<Long>()
+    return (Long) new JedisCommand<Long>()
     {
       public Long execute(JedisCommands jedis)
       {
@@ -127,7 +122,7 @@ public class CodisImpl
 
   public void delete(final String key)
   {
-    new JedisCommad<Object>()
+    new JedisCommand<Object>()
     {
       public Long execute(JedisCommands jedis)
       {
@@ -138,7 +133,7 @@ public class CodisImpl
 
   public void hdel(final String key, final String field)
   {
-    new JedisCommad<Object>()
+    new JedisCommand<Object>()
     {
       public Long execute(JedisCommands jedis)
       {
@@ -149,29 +144,29 @@ public class CodisImpl
 
   public Long lpush(final String key, final Object value)
   {
-    return (Long) new JedisCommad<Long>()
+    return (Long) new JedisCommand<Long>()
     {
       public Long execute(JedisCommands jedis)
       {
-        return jedis.lpushx(buildKey( key ), new String[] { GsonUtils.toJsonStr(value) });
+        return jedis.lpush(buildKey( key ), new String[] { GsonUtils.toJsonStr(value) });
       }
     }.run(redisFactory);
   }
 
   public Long rpush(final String key, final Object value)
   {
-    return (Long) new JedisCommad<Long>()
+    return (Long) new JedisCommand<Long>()
     {
       public Long execute(JedisCommands jedis)
       {
-        return jedis.rpushx(buildKey( key ), new String[] { GsonUtils.toJsonStr(value) });
+        return jedis.rpush(buildKey( key ), new String[] { GsonUtils.toJsonStr(value) });
       }
     }.run(redisFactory);
   }
 
   public String lpop(final String key)
   {
-    return (String) new JedisCommad<String>()
+    return (String) new JedisCommand<String>()
     {
       public String execute(JedisCommands jedis)
       {
@@ -182,7 +177,7 @@ public class CodisImpl
 
   public String rpop(final String key)
   {
-    return (String) new JedisCommad<String>()
+    return (String) new JedisCommand<String>()
     {
       public String execute(JedisCommands jedis)
       {
@@ -193,7 +188,7 @@ public class CodisImpl
 
   public void publish(final String channel, final String msg)
   {
-    new JedisCommad<Object>()
+    new JedisCommand<Object>()
     {
       public Void execute(JedisCommands jedis)
       {
@@ -208,7 +203,7 @@ public class CodisImpl
 
   public void subscribe(final BinaryJedisPubSub binaryJedisPubSub, final byte[]... channels)
   {
-    new JedisCommad<Object>()
+    new JedisCommand<Object>()
     {
       public Void execute(JedisCommands jedis) {
 
@@ -234,17 +229,14 @@ public class CodisImpl
 
   @Override
   public Set<String> getKeysByPrefix(final String prefix) {
-    return new JedisCommad<Set<String>>()
+    return new JedisCommand<Set<String>>()
     {
       public Set<String> execute(JedisCommands jds) {
-        if(!(jds instanceof Jedis))
-          return null;
-        Jedis jedis = null;
+
         boolean isBroken = false;
         try {
-          jedis = ((Jedis)jds);
-          Set<String> set = jedis.keys(prefix + "*");
-          return set;
+          return keys(prefix + "*", jds );
+
         } catch (Exception e) {
           isBroken = true;
           e.printStackTrace();
@@ -257,16 +249,14 @@ public class CodisImpl
 
   @Override
   public Integer getKeysCountByPrefix(final String prefix) {
-    return new JedisCommad<Integer>()
+    return new JedisCommand<Integer>()
     {
       public Integer execute(JedisCommands jds) {
-        if(!(jds instanceof Jedis))
-          return null;
-        Jedis jedis = null;
+
         boolean isBroken = false;
         try {
-          jedis = ((Jedis)jds);
-          Set<String> set = jedis.keys("*" + prefix + "*");
+
+          Set<String> set = keys("*" + prefix + "*", jds);
           return set == null ? 0 : set.size();
         } catch (Exception e) {
           isBroken = true;
@@ -278,35 +268,63 @@ public class CodisImpl
     }.run(redisFactory);
   }
 
+  public Set<String> keys(String pattern, JedisCommands jds){
+    Set<String> keys = new TreeSet<String>();
+    logger.debug("Start getting keys...");
+    if( jds instanceof Jedis ){
+      logger.debug("Keys gotten from Jedis!");
+       return ((Jedis)jds).keys( pattern );
+    } else if( !(jds instanceof JedisCluster) ){
+      return keys;
+    }
+
+    Map<String, JedisPool> clusterNodes = ( (JedisCluster)jds ).getClusterNodes();
+    for(String k : clusterNodes.keySet()){
+      logger.debug("Getting keys from: k" );
+      JedisPool jp = clusterNodes.get(k);
+      Jedis connection = null;
+      try {
+        connection = jp.getResource();
+        keys.addAll(connection.keys(pattern));
+      } catch(Exception e){
+        logger.error("Getting keys error: {}", e);
+      } finally{
+        logger.debug("Connection closed.");
+        if( connection != null ) connection.close();//用完一定要close这个链接！！！
+      }
+    }
+    logger.debug("Keys gotten from JedisCluster!");
+    return keys;
+  }
   @Override
   public void delKeysByPrefix(final String prefix) {
-    new JedisCommad<Object>()
+
+    new JedisCommand<Object>()
     {
       public Void execute(JedisCommands jds) {
-        if(!(jds instanceof Jedis))
-          return null;
-        Jedis jedis = null;
+
         boolean isBroken = false;
         String[] keys = null;
         int i = 0;
         try {
-          jedis = ((Jedis)jds);
-          Set<String> set = jedis.keys("*" + prefix + "*");
+          Set<String> set = keys("*" + prefix + "*", jds);
+
           Iterator<String> it = set.iterator();
 
           keys = new String[set.size()];
-
 
           while(it.hasNext()){
             String keyStr = it.next();
             keys[i] = keyStr;
             i++;
-
-            //jedis.del(keyStr);
-            //delByKey(keyStr);
           }
           if(i > 0){
-            jedis.del(keys);
+            if( jds instanceof Jedis ){
+              ((Jedis)jds).del(keys);
+            } else if( (jds instanceof JedisCluster) ){
+              ((JedisCluster)jds).del(keys);
+            }
+
             delByKey(keys);
           }
           logger.debug(StringTools.format(" [%s] redis key: del成功" , i));
@@ -323,20 +341,16 @@ public class CodisImpl
 
   @Override
   public <K> Boolean expire(final String key, final int timeout, final TimeUnit unit) {
-    return new JedisCommad<Boolean>()
+    return new JedisCommand<Boolean>()
     {
       public Boolean execute(JedisCommands jedis) {
-        if(!(jedis instanceof Jedis))
-          return null;
-        Jedis jds = null;
+
         boolean isBroken = false;
         try {
-          jds = ((Jedis)jedis);
-          jds.select(0);
-          byte[] skey = SerializeUtil.serialize(buildKey( key ));
+
           long rawTimeout = TimeoutUtils.toSeconds(timeout, unit);
-          //jds.expire(skey, (int)rawTimeout);
-          jds.pexpire(skey, rawTimeout);
+
+          jedis.pexpire( buildKey( key ), rawTimeout );
           isBroken = true;
         } catch (Exception e) {
 
@@ -350,20 +364,14 @@ public class CodisImpl
 
   @Override
   public <K> Boolean expire(final String key, final int milliseconds) {
-    return new JedisCommad<Boolean>()
+    return new JedisCommand<Boolean>()
     {
       public Boolean execute(JedisCommands jedis) {
-        if(!(jedis instanceof Jedis))
-          return null;
-        Jedis jds = null;
+
         boolean isBroken = false;
         try {
-          jds = ((Jedis)jedis);
-          jds.select(0);
-          byte[] skey = SerializeUtil.serialize(key);
 
-          //jds.expire(skey, (int)rawTimeout);
-          jds.pexpire(skey, milliseconds);
+          jedis.pexpire( buildKey( key ), milliseconds );
           isBroken = true;
         } catch (Exception e) {
 
@@ -377,20 +385,19 @@ public class CodisImpl
   }
 
   @Override
-  public void expire(final int dbIndex, final byte[] key, final int expireTime) {
-    new JedisCommad<Object>()
+  public void expire(final int dbIndex, final String key, final int expireTime) {
+    new JedisCommand<Object>()
     {
       public Void execute(JedisCommands jds) {
-        if(!(jds instanceof Jedis))
-          return null;
-        Jedis jedis = null;
+        if((jds instanceof Jedis))
+          ((Jedis)jds).select(dbIndex);
+
         boolean isBroken = false;
         try {
-          jedis = ((Jedis)jds);
-          jedis.select(dbIndex);
+
           //jedis.set(key, value);
           if (expireTime > 0)
-            jedis.expire(key, expireTime);
+            jds.expire( buildKey( key ), expireTime );
         } catch (Exception e) {
           isBroken = true;
           throw e;
@@ -404,22 +411,17 @@ public class CodisImpl
 
   @Override
   public <T> T getVByMap(final String mapkey, final String key, final Class<T> requiredType) {
-    return new JedisCommad<T>()
+    return new JedisCommand<T>()
     {
       public T execute(JedisCommands jedis) {
-        if(!(jedis instanceof Jedis))
-          return null;
-        Jedis jds = null;
+
         boolean isBroken = false;
         try {
-          jds = ((Jedis)jedis);
-          jds.select(0);
-          byte[] mkey = SerializeUtil.serialize(mapkey);
-          byte[] skey = SerializeUtil.serialize(key);
-          List<byte[]> result = jds.hmget(mkey, skey);
+
+          List<String> result = jedis.hmget( buildKey( mapkey ), key );
           if(null != result && result.size() > 0 ){
-            byte[] x = result.get(0);
-            T resultObj = SerializeUtil.deserialize(x, requiredType);
+            String x = result.get(0);
+            T resultObj = GsonUtils.toObject(x, requiredType);
             return resultObj;
           }
 
@@ -435,21 +437,15 @@ public class CodisImpl
   }
 
   @Override
-  public void setVByMap(final String mapkey, final String key, final Object value) {
-    new JedisCommad<Object>()
+  public void setVByMap(final String mapName, final String key, final Object value) {
+    new JedisCommand<Object>()
     {
       public Void execute(JedisCommands jedis) {
-        if(!(jedis instanceof Jedis))
-          return null;
-        Jedis jds = null;
+
         boolean isBroken = false;
         try {
-          jds = ((Jedis)jedis);
-          jds.select(0);
-          byte[] mkey = SerializeUtil.serialize(mapkey);
-          byte[] skey = SerializeUtil.serialize(key);
-          byte[] svalue = SerializeUtil.serialize(value);
-          jds.hset(mkey, skey,svalue);
+
+          jedis.hset( buildKey( mapName ), key, GsonUtils.toJsonStr(value) );
         } catch (Exception e) {
           isBroken = true;
           e.printStackTrace();
@@ -461,23 +457,15 @@ public class CodisImpl
   }
 
   @Override
-  public Object delByMapKey(final String mapKey, final String... dkey) {
-    return new JedisCommad<Object>()
+  public Object delByMapKey(final String mapName, final String... dkey) {
+    return new JedisCommand<Object>()
     {
       public Object execute(JedisCommands jedis) {
-        if(!(jedis instanceof Jedis))
-          return null;
-        Jedis jds = null;
+
         boolean isBroken = false;
         try {
-          jds = ((Jedis)jedis);
-          jds.select(0);
-          byte[][] dx = new byte[dkey.length][];
-          for (int i = 0; i < dkey.length; i++) {
-            dx[i] = SerializeUtil.serialize(dkey[i]);
-          }
-          byte[] mkey = SerializeUtil.serialize(mapKey);
-          Long result = jds.hdel(mkey, dx);
+
+          Long result = jedis.hdel( buildKey( mapName ), dkey );
           return result;
         } catch (Exception e) {
           isBroken = true;
@@ -492,21 +480,17 @@ public class CodisImpl
 
   @Override
   public <T> Set<T> getVByList(final String setKey, final Class<T> requiredType) {
-    return new JedisCommad<Set<T>>()
+    return new JedisCommand<Set<T>>()
     {
       public Set<T> execute(JedisCommands jedis) {
-        if(!(jedis instanceof Jedis))
-          return null;
-        Jedis jds = null;
+
         boolean isBroken = false;
         try {
-          jds = ((Jedis)jedis);
-          jds.select(0);
-          byte[] lkey = SerializeUtil.serialize(setKey);
+
           Set<T> set = new TreeSet<T>();
-          Set<byte[]> xx = jds.smembers(lkey);
-          for (byte[] bs : xx) {
-            T t = SerializeUtil.deserialize(bs, requiredType);
+          Set<String> xx = jedis.smembers( buildKey( setKey ) );
+          for (String bs : xx) {
+            T t = GsonUtils.toObject(bs, requiredType);
             set.add(t);
           }
           return set;
@@ -523,17 +507,14 @@ public class CodisImpl
 
   @Override
   public Long getLenBySet(final String setKey) {
-    return new JedisCommad<Long>()
+    return new JedisCommand<Long>()
     {
       public Long execute(JedisCommands jedis) {
-        if(!(jedis instanceof Jedis))
-          return null;
-        Jedis jds = null;
+
         boolean isBroken = false;
         try {
-          jds = ((Jedis)jedis);
-          jds.select(0);
-          Long result = jds.scard(setKey);
+
+          Long result = jedis.scard( buildKey( setKey ) );
           return result;
         } catch (Exception e) {
           isBroken = true;
@@ -548,21 +529,18 @@ public class CodisImpl
 
   @Override
   public Long delSetByKey(final String key, final String... dkey) {
-    return new JedisCommad<Long>()
+    return new JedisCommand<Long>()
     {
       public Long execute(JedisCommands jedis) {
-        if(!(jedis instanceof Jedis))
-          return null;
-        Jedis jds = null;
+
         boolean isBroken = false;
         try {
-          jds = ((Jedis)jedis);
-          jds.select(0);
+
           Long result = 0L;
           if(null == dkey){
-            result = jds.srem(key);
+            result = jedis.srem( buildKey( key ) );
           }else{
-            result = jds.del(key);
+            result = jedis.del( buildKey( key ) );
           }
           return result;
         } catch (Exception e) {
@@ -578,17 +556,14 @@ public class CodisImpl
 
   @Override
   public String srandmember(final String key) {
-    return new JedisCommad<String>()
+    return new JedisCommand<String>()
     {
       public String execute(JedisCommands jedis) {
-        if(!(jedis instanceof Jedis))
-          return null;
-        Jedis jds = null;
+
         boolean isBroken = false;
         try {
-          jds = ((Jedis)jedis);
-          jds.select(0);
-          String result = jds.srandmember(key);
+
+          String result = jedis.srandmember( buildKey( key ) );
           return result;
         } catch (Exception e){
           isBroken = true;
@@ -602,17 +577,14 @@ public class CodisImpl
 
   @Override
   public void setVBySet(final String setKey, final String value) {
-    new JedisCommad<Object>()
+    new JedisCommand<Object>()
     {
       public Void execute(JedisCommands jedis) {
-        if(!(jedis instanceof Jedis))
-          return null;
-        Jedis jds = null;
+
         boolean isBroken = false;
         try {
-          jds = ((Jedis)jedis);
-          jds.select(0);
-          jds.sadd(setKey, value);
+
+          jedis.sadd( buildKey( setKey ), value );
         } catch (Exception e) {
           isBroken = true;
           e.printStackTrace();
@@ -625,17 +597,14 @@ public class CodisImpl
 
   @Override
   public Set<String> getSetByKey(final String key) {
-    return new JedisCommad<Set<String>>()
+    return new JedisCommand<Set<String>>()
     {
       public Set<String> execute(JedisCommands jedis) {
-        if(!(jedis instanceof Jedis))
-          return null;
-        Jedis jds = null;
+
         boolean isBroken = false;
         try {
-          jds = ((Jedis)jedis);
-          jds.select(0);
-          Set<String> result = jds.smembers(key);
+
+          Set<String> result = jedis.smembers( buildKey( key ) );
           return result;
         } catch (Exception e) {
           isBroken = true;
@@ -650,19 +619,14 @@ public class CodisImpl
 
   @Override
   public void setVByList(final String listKey, final Object value) {
-    new JedisCommad<Object>()
+    new JedisCommand<Object>()
     {
       public Void execute(JedisCommands jedis) {
-        if(!(jedis instanceof Jedis))
-          return null;
-        Jedis jds = null;
+
         boolean isBroken = false;
         try {
-          jds = ((Jedis)jedis);
-          jds.select(0);
-          byte[] lkey = SerializeUtil.serialize(listKey);
-          byte[] svalue = SerializeUtil.serialize(value);
-          jds.rpush(lkey, svalue);
+
+          jedis.rpush( buildKey( listKey ),  GsonUtils.toJsonStr(value) );
         } catch (Exception e) {
           isBroken = true;
           e.printStackTrace();
@@ -683,18 +647,14 @@ public class CodisImpl
 
   @Override
   public void setKVByList(final String listKey, final String value) {
-    new JedisCommad<Object>()
+    new JedisCommand<Object>()
     {
       public Void execute(JedisCommands jedis) {
-        if(!(jedis instanceof Jedis))
-          return null;
-        Jedis jds = null;
+
         boolean isBroken = false;
         try {
-          jds = ((Jedis)jedis);
-          jds.select(0);
 
-          jds.rpush(listKey, value);
+          jedis.rpush(buildKey( listKey ), value);
         } catch (Exception e) {
           isBroken = true;
           e.printStackTrace();
@@ -707,24 +667,18 @@ public class CodisImpl
 
   @Override
   public <T> void setVByListMutiElements(final String listKey, final List<T> values) {
-    new JedisCommad<Object>()
+    new JedisCommand<Object>()
     {
       public Void execute(JedisCommands jedis) {
-        if(!(jedis instanceof Jedis))
-          return null;
-        Jedis jds = null;
+
         boolean isBroken = false;
         try {
-          jds = ((Jedis)jedis);
-          jds.select(0);
-          byte[] lkey = SerializeUtil.serialize(listKey);
-          //List<byte[]> valueBs = new ArrayList<>();
-          for(Object obj : values){
-            byte[] svalue = SerializeUtil.serialize(obj);
-            //valueBs.add(svalue);
-            jds.rpush(lkey, svalue);
-          }
 
+          String[] vs = new String[values.size()];
+          for(int i = 0; i <  values.size(); i++){
+            vs[i] = GsonUtils.toJsonStr(values.get(i));
+          }
+          jedis.rpush( buildKey( listKey ), vs );
         } catch (Exception e) {
           isBroken = true;
           e.printStackTrace();
@@ -737,21 +691,17 @@ public class CodisImpl
 
   @Override
   public <T> List<T> getVByList(final String listKey, final int start, final int end, final Class<T> requiredType) {
-    return new JedisCommad<List<T>>()
+    return new JedisCommand<List<T>>()
     {
       public List<T> execute(JedisCommands jedis) {
-        if(!(jedis instanceof Jedis))
-          return null;
-        Jedis jds = null;
+
         boolean isBroken = false;
         try {
-          jds = ((Jedis)jedis);
-          jds.select(0);
-          byte[] lkey = SerializeUtil.serialize(listKey);
+
           List<T> list = new ArrayList<T>();
-          List<byte[]> xx = jds.lrange(lkey,start,end);
-          for (byte[] bs : xx) {
-            T t = SerializeUtil.deserialize(bs, requiredType);
+          List<String> xx = jedis.lrange( buildKey( listKey ),start,end );
+          for (String bs : xx) {
+            T t = GsonUtils.toObject(bs, requiredType);
             list.add(t);
           }
           return list;
@@ -768,18 +718,14 @@ public class CodisImpl
 
   @Override
   public Long getLenByList(final String listKey) {
-    return new JedisCommad<Long>()
+    return new JedisCommand<Long>()
     {
       public Long execute(JedisCommands jedis) {
-        if(!(jedis instanceof Jedis))
-          return null;
-        Jedis jds = null;
+
         boolean isBroken = false;
         try {
-          jds = ((Jedis)jedis);
-          jds.select(0);
-          byte[] lkey = SerializeUtil.serialize(listKey);
-          Long result = jds.llen(lkey);
+
+          Long result = jedis.llen( buildKey( listKey ) );
           return result;
         } catch (Exception e) {
           isBroken = true;
@@ -793,21 +739,20 @@ public class CodisImpl
 
   @Override
   public Long delByKey(final String... dkey) {
-    return new JedisCommad<Long>()
+    return new JedisCommand<Long>()
     {
       public Long execute(JedisCommands jedis) {
-        if(!(jedis instanceof Jedis))
-          return null;
-        Jedis jds = null;
+
         boolean isBroken = false;
         try {
-          jds = ((Jedis)jedis);
-          jds.select(0);
-          byte[][] dx = new byte[dkey.length][];
-          for (int i = 0; i < dkey.length; i++) {
-            dx[i] = SerializeUtil.serialize(dkey[i]);
+
+          Long result = 0L;
+
+          if( jedis instanceof Jedis ){
+            result = ((Jedis)jedis).del(dkey);
+          } else if( (jedis instanceof JedisCluster) ){
+            result = ((JedisCluster)jedis).del(dkey);
           }
-          Long result = jds.del(dx);
           return result;
         } catch (Exception e) {
           isBroken = true;
@@ -821,18 +766,14 @@ public class CodisImpl
 
   @Override
   public Boolean exists(final String existskey) {
-    return new JedisCommad<Boolean>()
+    return new JedisCommand<Boolean>()
     {
       public Boolean execute(JedisCommands jedis) {
-        if(!(jedis instanceof Jedis))
-          return null;
-        Jedis jds = null;
+
         boolean isBroken = false;
         try {
-          jds = ((Jedis)jedis);
-          jds.select(0);
-          byte[] lkey = SerializeUtil.serialize(existskey);
-          return jds.exists(lkey);
+
+          return jedis.exists( buildKey( existskey ) );
         } catch (Exception e) {
           isBroken = true;
           e.printStackTrace();
