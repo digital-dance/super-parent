@@ -13,23 +13,28 @@
   
 	<select id="findNextIdentityValue" statementType="CALLABLE" resultType="Long" parameterType="identityEO">
 		<if test="seqName != null" >
-			<![CDATA[
-			{CALL nextval(
-			    #{seqName,jdbcType=VARCHAR,mode=IN}
-			)}
-			]]>
-		</if>
+			<!--<![CDATA[-->
+			<!--{CALL nextval(-->
+			    <!--#{seqName,jdbcType=VARCHAR,mode=IN}-->
+			<!--)}-->
+			<!--]]>-->
+            select nextval(#{seqName,jdbcType=VARCHAR,mode=IN}) FROM dual
+        </if>
 	</select>
   
   <select id="resetIdentityValue" statementType="CALLABLE" resultType="Long" parameterType="identityEO">
 		<if test="seqName != null" >
-			<![CDATA[
-			{CALL setval(
-			    #{system,jdbcType=VARCHAR,mode=IN},
-			    #{identity,jdbcType=BIGINT,mode=IN}
-			)}
-			]]>
-		</if>
+			<!--<![CDATA[-->
+			<!--{CALL setval(-->
+			    <!--#{system,jdbcType=VARCHAR,mode=IN},-->
+			    <!--#{identity,jdbcType=BIGINT,mode=IN}-->
+			<!--)}-->
+			<!--]]>-->
+            select setval(
+            #{system,jdbcType=VARCHAR,mode=IN},
+            #{identity,jdbcType=BIGINT,mode=IN}
+            ) FROM dual
+        </if>
   </select>
 
 </mapper>
