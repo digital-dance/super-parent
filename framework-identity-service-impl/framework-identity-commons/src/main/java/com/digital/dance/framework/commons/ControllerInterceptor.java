@@ -31,12 +31,13 @@ public class ControllerInterceptor  extends HandlerInterceptorAdapter {
 		super.preHandle(request, response, handler);
 		
 		//request.setAttribute("basePath",request.getContextPath());
-		response.setHeader("Access-Control-Allow-Origin", "*");
-		response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, PATCH");
-		response.setHeader("Access-Control-Allow-Headers", "Origin, No-Cache, SESSION, Cookie, Set-Cookie, X-Requested-With, If-Modified-Since, Pragma, Last-Modified, Cache-Control, Expires, Content-Type, X-E4M-With, Access-Control-Allow-Origin, Access-Control-Allow-Methods, X-Auth-Token, Access-Control-Allow-Credientials");
-		response.setHeader("Access-Control-Expose-Headers", "X-Auth-Token");
+		((HttpServletResponse)response).setHeader("Access-Control-Allow-Origin", "*");
+		((HttpServletResponse)response).setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, PATCH");
+		((HttpServletResponse)response).setHeader("Access-Control-Allow-Headers", "Origin, SESSION, Cookie, Set-Cookie, No-Cache, X-Requested-With, If-Modified-Since, X-E4M-With, Access-Control-Allow-Origin, Access-Control-Allow-Methods, X-Auth-Token, Access-Control-Allow-Credientials, Pragma, Last-Modified, Cache-Control, Expires, Content-Type,Content-Language");
+		((HttpServletResponse)response).setHeader("Access-Control-Expose-Headers", "Origin, SESSION, Cookie, Set-Cookie, No-Cache, X-Requested-With, If-Modified-Since, X-E4M-With, Access-Control-Allow-Origin, Access-Control-Allow-Methods, X-Auth-Token, Access-Control-Allow-Credientials,X-Auth-Token");
+		((HttpServletResponse)response).setHeader("Access-Control-Allow-Credientials", "true");
 		//response.setHeader("Access-Control-Allow-Headers", "X-Custom-Header");
-		response.setHeader("Access-Control-Allow-Credientials", "true");
+//		response.setHeader("Access-Control-Allow-Credientials", "true");
 		return true;
 	}
 

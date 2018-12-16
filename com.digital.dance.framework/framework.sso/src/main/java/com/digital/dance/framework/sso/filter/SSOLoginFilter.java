@@ -105,7 +105,9 @@ public class SSOLoginFilter implements Filter {
 		//Matcher matcher = Pattern.matches(regex, input);
 		for (String passedPath : passedPaths) {
 			if(StringUtils.isBlank(passedPath)) continue;
-			Pattern pattern = Pattern.compile( passedPath.toLowerCase() );  
+
+			Pattern pattern = Pattern.compile( passedPath.toLowerCase().replace("/", "\\/").replace("**", "(.*)?") );
+
 	        Matcher matcher = pattern.matcher(requestPath);
 			flag = matcher.find();
 			if (flag) {
@@ -128,14 +130,22 @@ public class SSOLoginFilter implements Filter {
 		//begin
 		(response).setHeader("Access-Control-Allow-Origin", "*");
 		(response).setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, PATCH");
-		(response).setHeader("Access-Control-Allow-Headers", "Origin, SESSION, Cookie, Set-Cookie, No-Cache, X-Requested-With, If-Modified-Since, Pragma, Last-Modified, Cache-Control, Expires, Content-Type, X-E4M-With, Access-Control-Allow-Origin, Access-Control-Allow-Methods, X-Auth-Token, Access-Control-Allow-Credientials");
-		(response).setHeader("Access-Control-Expose-Headers", "X-Auth-Token");
+		(response).setHeader("Access-Control-Allow-Headers", "Origin, SESSION, Cookie, Set-Cookie, No-Cache, X-Requested-With, If-Modified-Since, X-E4M-With, Access-Control-Allow-Origin, Access-Control-Allow-Methods, X-Auth-Token, Access-Control-Allow-Credientials, Pragma, Last-Modified, Cache-Control, Expires, Content-Type,Content-Language");
+		(response).setHeader("Access-Control-Expose-Headers", "Origin, SESSION, Cookie, Set-Cookie, No-Cache, X-Requested-With, If-Modified-Since, X-E4M-With, Access-Control-Allow-Origin, Access-Control-Allow-Methods, X-Auth-Token, Access-Control-Allow-Credientials,X-Auth-Token");
 		response.setHeader("Access-Control-Allow-Credientials", "true");
 		//end
 		response.setHeader("Content-type", "text/html;charset=UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		String requestPath = request.getRequestURL().toString();
 		String casLoginurl = this.ssologinManageHelper.getCasLoginurl();
+
+		boolean passedFlag = isPassedRequest( passedPaths, request, response, chain )
+				|| isPassedRequest( allowSuffix, request, response, chain )
+				|| isPassedRequest( bizloginUrl, request, response, chain );
+		if( passedFlag ){
+			chain.doFilter(request, response);
+			return;
+		}
 
 		LoginInfo loginInfo = null;
 
@@ -166,7 +176,7 @@ public class SSOLoginFilter implements Filter {
 			//TO DO get CasPubKey begin
 			Map<String, String> map = new HashMap<String, String>();
 
-			String pubKeyResponse = HttpClientUtil.executePostRequest(ssologinManageHelper.getLoginServiceUrl()+"/pubKey", new HashMap<String, String>(), map);
+			String pubKeyResponse = HttpClientUtil.executePostRequest(ssologinManageHelper.getLoginServiceUrl()+"/pubkey", new HashMap<String, String>(), map);
 
 			ResponseVo pubKeyResponseVo = (ResponseVo) JSONUtils.toObject(pubKeyResponse, ResponseVo.class);
 			pubKey = pubKeyResponseVo.getResult().toString();
@@ -179,14 +189,6 @@ public class SSOLoginFilter implements Filter {
 //		String securitykey = "";
 		String tokenJson = "";
 		//String md5 = null;
-		
-		boolean passedFlag = isPassedRequest( passedPaths, request, response, chain )
-					|| isPassedRequest( allowSuffix, request, response, chain )
-					|| isPassedRequest( bizloginUrl, request, response, chain );
-		if( passedFlag ){
-			chain.doFilter(request, response);
-			return;
-		}
 
 		//验证只读页
 		passedFlag = isPassedRequest( readonlyUrls, request, response, chain );
