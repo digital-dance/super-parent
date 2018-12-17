@@ -171,6 +171,7 @@ public class RedisFactory implements InitializingBean, DisposableBean {
 
 		for (String n : nodeList){
 			String[] ip = n.split(":");
+			if(ip == null || ip.length <= 1) continue;
 			HostAndPort hostAndPort = new HostAndPort(ip[0], Integer.parseInt(ip[1]));
 			nodes.add(hostAndPort);
 		}
