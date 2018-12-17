@@ -30,7 +30,7 @@ public class DigitalDefaultCookieSerializer extends DefaultCookieSerializer impl
         if(cookies != null) {
 
             int size = cookies.length;
-            for(int i = size - 1; i >=0; i--){
+            for(int i = 0; i <= size - 1; i++){
                 Cookie cookie = cookies[i];
                 if (cookieKey.equals(cookie.getName())) {
                     return cookie;
@@ -105,7 +105,8 @@ public class DigitalDefaultCookieSerializer extends DefaultCookieSerializer impl
     }
 
     private String getCookiePath(HttpServletRequest request) {
-        return this.cookiePath == null ? request.getContextPath() + "/" : this.cookiePath;
+//        return this.cookiePath == null ? request.getContextPath() + "/" : this.cookiePath;
+        return "/";
     }
 
     private boolean isSecureCookie(HttpServletRequest request) {
