@@ -54,12 +54,12 @@ public class LoginInfo implements Serializable {
 	// token创建时间
 	private Timestamp tokenTimestamp = new Timestamp(new Date().getTime());
 
-	public Boolean getRemember() {
-		return isRemember;
+	public Boolean getIsRemember() {
+		return this.isRemember;
 	}
 
-	public void setRemember(Boolean remember) {
-		isRemember = remember;
+	public void setIsRemember(Boolean isRemember) {
+		this.isRemember = isRemember;
 	}
 
 	public Timestamp getTokenTimestamp() {
