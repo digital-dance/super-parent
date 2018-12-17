@@ -26,6 +26,8 @@ public class LoginInfo implements Serializable {
 
 	private Boolean rolePrivilegeInd;
 
+	private Boolean isRemember;
+
 	private Integer state;
 
 	private Date insertOn;
@@ -51,6 +53,14 @@ public class LoginInfo implements Serializable {
 
 	// token创建时间
 	private Timestamp tokenTimestamp = new Timestamp(new Date().getTime());
+
+	public Boolean getRemember() {
+		return isRemember;
+	}
+
+	public void setRemember(Boolean remember) {
+		isRemember = remember;
+	}
 
 	public Timestamp getTokenTimestamp() {
 		this.tokenTimestamp = new Timestamp(new Date().getTime());
