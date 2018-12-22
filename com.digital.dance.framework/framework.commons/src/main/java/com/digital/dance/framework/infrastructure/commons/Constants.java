@@ -18,7 +18,9 @@ public class Constants {
 		FAILURE("10001"),
 		SUCCESS("10000"),
 		
-		REDIRECT("10002");
+		REDIRECT("10002"),
+
+		NOPRIVILEGE("10003");
 
 		private String statusCode;
 

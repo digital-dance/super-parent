@@ -85,6 +85,7 @@ public class XssFilter implements Filter {
             if (rsp != null)
 
                 try {
+                    rsp.flush();
                     rsp.close();
                 } catch (Throwable x2) {
                     if (localThrowable0 != null)

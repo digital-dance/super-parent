@@ -299,9 +299,9 @@ public class CodisImpl
   @Override
   public void delKeysByPrefix(final String prefix) {
 
-    new JedisCommand<Object>()
+    String[] prefixKeys = new JedisCommand<String[]>()
     {
-      public Void execute(JedisCommands jds) {
+      public String[] execute(JedisCommands jds) {
 
         boolean isBroken = false;
         String[] keys = null;
@@ -318,25 +318,26 @@ public class CodisImpl
             keys[i] = keyStr;
             i++;
           }
-          if(i > 0){
-            if( jds instanceof Jedis ){
-              ((Jedis)jds).del(keys);
-            } else if( (jds instanceof JedisCluster) ){
-              ((JedisCluster)jds).del(keys);
-            }
-
-            delByKey(keys);
-          }
+//          if(i > 0){
+//            if( jds instanceof Jedis ){
+//              ((Jedis)jds).del(keys);
+//            } else if( (jds instanceof JedisCluster) ){
+//              ((JedisCluster)jds).del(keys);
+//            }
+//
+//            delByKey(keys);
+//          }
           logger.debug(StringTools.format(" [%s] redis key: del成功" , i));
         } catch (Exception e) {
           isBroken = true;
           logger.error(StringTools.format( " [%s] redis key: del失败" , i), e);
           e.printStackTrace();
         }
-        return null;
+        return keys;
       }
 
     }.run(redisFactory);
+    delByKey(prefixKeys);
   }
 
   @Override
