@@ -285,7 +285,14 @@ public class CodisImpl
       Jedis connection = null;
       try {
         connection = jp.getResource();
-        keys.addAll(connection.keys(pattern));
+        Set<String> nodeKeys = connection.keys(pattern);
+        for (String nK : nodeKeys){
+          if(keys.contains(nK)){
+            continue;
+          }
+          keys.add(nK);
+        }
+//        keys.addAll(connection.keys(pattern));
       } catch(Exception e){
         logger.error("Getting keys error: {}", e);
       } finally{
