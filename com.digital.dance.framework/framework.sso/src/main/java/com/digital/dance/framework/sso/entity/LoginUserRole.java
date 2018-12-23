@@ -1,8 +1,9 @@
 package com.digital.dance.framework.sso.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class LoginUserRole {
+public class LoginUserRole implements Serializable {
 	private String userId ; 
 	private String roleId ;
 	private String userName;
