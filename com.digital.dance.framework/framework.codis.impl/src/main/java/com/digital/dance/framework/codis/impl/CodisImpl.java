@@ -7,8 +7,10 @@ import com.digital.dance.framework.infrastructure.commons.GsonUtils;
 import com.digital.dance.framework.infrastructure.commons.Log;
 import com.digital.dance.framework.infrastructure.commons.StringTools;
 
+import com.google.common.collect.Lists;
 import org.springframework.data.redis.core.TimeoutUtils;
 import redis.clients.jedis.*;
+import redis.clients.util.JedisClusterCRC16;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -268,6 +270,69 @@ public class CodisImpl
     }.run(redisFactory);
   }
 
+  public String[] delKeysByPattern(String pattern, JedisCommands jds){
+    String[] delkeys = null;
+    Set<String> keys = new TreeSet<String>();
+    logger.debug("Start getting keys...");
+    if( jds instanceof Jedis ){
+      logger.debug("Keys gotten from Jedis!");
+      keys = ((Jedis)jds).keys( pattern );
+      delkeys = new String[keys != null ? keys.size() : 0];
+
+      ((Jedis)jds).del(keys.toArray(delkeys));
+
+      return delkeys;
+    } else if( !(jds instanceof JedisCluster) ){
+      return delkeys;
+    }
+    Map<String, List<String>> map = new HashMap<>(6600);
+    Map<String, JedisPool> clusterNodes = ( (JedisCluster)jds ).getClusterNodes();
+    for(String k : clusterNodes.keySet()){
+      logger.debug("Getting keys from: " + k );
+      JedisPool jp = clusterNodes.get(k);
+      Jedis jedis = null;
+      try {
+        jedis = jp.getResource();
+        if (!jedis.info("replication").contains("role:slave")) {
+          Set<String> nodeKeys = jedis.keys(pattern);
+          if (nodeKeys != null && (nodeKeys.size() > 0)) {
+
+            keys.addAll(nodeKeys);
+            for (String key : nodeKeys){
+
+              Integer slot = JedisClusterCRC16.getSlot(key);
+              if ( map.containsKey(slot.toString()) ) {
+                map.get(slot.toString()).add(key);
+              } else {
+                map.put(slot.toString(), Lists.newArrayList(key));
+              }
+
+            }
+
+          }
+        }
+      } catch(Exception e){
+        logger.error("Getting keys error: {}", e);
+      } finally{
+        logger.debug("jedis closed.");
+        if (jedis != null) jedis.close();//用完一定要close这个链接！！！
+      }
+
+    }
+    for (String slotItem : map.keySet()) {
+      List<String> slotKeys = map.get(slotItem);
+      try {
+        ( (JedisCluster)jds ).del(slotKeys.toArray(new String[slotKeys.size()]));
+        logger.debug( "slotItem:" + slotItem + ",del '" + slotKeys.size() + "'" + slotKeys.toString());
+      } catch (Exception ex) {
+        logger.error( "slotItem:" + slotItem + ",del '" + slotKeys.size() + "' error: {}", ex);
+      }
+    }
+    logger.debug("Keys gotten from JedisCluster!");
+    delkeys = new String[keys != null ? keys.size() : 0];
+    return keys.toArray(delkeys);
+  }
+
   public Set<String> keys(String pattern, JedisCommands jds){
     Set<String> keys = new TreeSet<String>();
     logger.debug("Start getting keys...");
@@ -287,10 +352,9 @@ public class CodisImpl
         connection = jp.getResource();
         Set<String> nodeKeys = connection.keys(pattern);
         for (String nK : nodeKeys){
-          if(keys.contains(nK)){
-            continue;
+          if(!keys.contains(nK)){
+            keys.add(nK);
           }
-          keys.add(nK);
         }
 //        keys.addAll(connection.keys(pattern));
       } catch(Exception e){
@@ -303,6 +367,7 @@ public class CodisImpl
     logger.debug("Keys gotten from JedisCluster!");
     return keys;
   }
+
   @Override
   public void delKeysByPrefix(final String prefix) {
 
@@ -311,20 +376,20 @@ public class CodisImpl
       public String[] execute(JedisCommands jds) {
 
         boolean isBroken = false;
-        String[] keys = null;
+        String[] delKeys = null;
         int i = 0;
         try {
-          Set<String> set = keys("*" + prefix + "*", jds);
+          delKeys = delKeysByPattern("*" + prefix + "*", jds);
 
-          Iterator<String> it = set.iterator();
-
-          keys = new String[set.size()];
-
-          while(it.hasNext()){
-            String keyStr = it.next();
-            keys[i] = keyStr;
-            i++;
-          }
+//          Iterator<String> it = set.iterator();
+//
+//          keys = new String[set.size()];
+//
+//          while(it.hasNext()){
+//            String keyStr = it.next();
+//            keys[i] = keyStr;
+//            i++;
+//          }
 //          if(i > 0){
 //            if( jds instanceof Jedis ){
 //              ((Jedis)jds).del(keys);
@@ -334,17 +399,21 @@ public class CodisImpl
 //
 //            delByKey(keys);
 //          }
+          if( delKeys != null ) i = delKeys.length;
           logger.debug(StringTools.format(" [%s] redis key: del成功" , i));
         } catch (Exception e) {
           isBroken = true;
           logger.error(StringTools.format( " [%s] redis key: del失败" , i), e);
           e.printStackTrace();
         }
-        return keys;
+        return delKeys;
       }
 
     }.run(redisFactory);
-    delByKey(prefixKeys);
+//    if( prefixKeys != null && prefixKeys.length > 0 ){
+//      delByKey(prefixKeys);
+//    }
+
   }
 
   @Override
@@ -756,12 +825,18 @@ public class CodisImpl
 
           Long result = 0L;
 
-          if( jedis instanceof Jedis ){
-            result = ((Jedis)jedis).del(dkey);
-          } else if( (jedis instanceof JedisCluster) ){
-            result = ((JedisCluster)jedis).del(dkey);
+          if( (jedis instanceof JedisCluster) ){
+            for(String key : dkey){
+              result = ((JedisCluster)jedis).del(dkey);
+            }
+
+          } else if( jedis instanceof Jedis ){
+            for(String key : dkey){
+              result = ((Jedis)jedis).del(key);
+            }
+
           }
-          return result;
+            return result;
         } catch (Exception e) {
           isBroken = true;
           e.printStackTrace();
