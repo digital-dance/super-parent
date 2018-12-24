@@ -15,9 +15,8 @@ import redis.clients.util.JedisClusterCRC16;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class CodisImpl
-  implements Codis
-{
+public class CodisImpl implements Codis {
+
   private static final Log logger = new Log(CodisImpl.class);
   private RedisFactory redisFactory;
   private String salt;
@@ -331,6 +330,51 @@ public class CodisImpl
     logger.debug("Keys gotten from JedisCluster!");
     delkeys = new String[keys != null ? keys.size() : 0];
     return keys.toArray(delkeys);
+  }
+
+  public String[] delClusterKeys( JedisCommands jds, String... keys ){
+        String[] delkeys = keys;
+
+        logger.debug("Start deleting keys..." );
+        if( jds instanceof Jedis ){
+            logger.debug("Keys deleting from Jedis!" );
+
+            ( (Jedis)jds ).del( keys );
+
+            logger.debug("Keys deleted from Jedis!" );
+            return delkeys;
+        } else if( !( jds instanceof JedisCluster ) ){
+            return delkeys;
+        }
+        Map<String, List<String>> map = new HashMap<>(6600);
+
+        if ( keys != null && ( keys.length > 0 ) ) {
+
+            for ( String key : keys ){
+
+                Integer slot = JedisClusterCRC16.getSlot( key );
+                if ( map.containsKey( slot.toString() ) ) {
+                    map.get( slot.toString() ).add(key);
+                } else {
+                    map.put( slot.toString(), Lists.newArrayList(key) );
+                }
+
+            }
+
+        }
+
+        for ( String slotItem : map.keySet() ) {
+            List<String> slotKeys = map.get( slotItem );
+            try {
+                ( (JedisCluster)jds ).del( slotKeys.toArray( new String[ slotKeys.size() ] ) );
+                logger.debug( "slotItem:" + slotItem + ",del '" + slotKeys.size() + "'" + slotKeys.toString() );
+            } catch ( Exception ex ) {
+                logger.error( "slotItem:" + slotItem + ",del '" + slotKeys.size() + "' error: {}", ex );
+            }
+        }
+        logger.debug("Keys deleted from JedisCluster!" );
+
+        return keys;
   }
 
   public Set<String> keys(String pattern, JedisCommands jds){
@@ -819,30 +863,29 @@ public class CodisImpl
     return new JedisCommand<Long>()
     {
       public Long execute(JedisCommands jedis) {
-
+        Long result = 0L;
         boolean isBroken = false;
         try {
 
-          Long result = 0L;
-
           if( (jedis instanceof JedisCluster) ){
-            for(String key : dkey){
-              result = ((JedisCluster)jedis).del(dkey);
-            }
-
+//            for(String key : dkey){
+//              result = ((JedisCluster)jedis).del(key);
+//            }
+            String[] rets = delClusterKeys( jedis, dkey );
+            result =  new Long( rets.length );
           } else if( jedis instanceof Jedis ){
-            for(String key : dkey){
-              result = ((Jedis)jedis).del(key);
-            }
-
+//            for(String key : dkey){
+//              result = ((Jedis)jedis).del(key);
+//            }
+            result = ( (Jedis)jedis ).del( dkey );
           }
-            return result;
+          return result;
         } catch (Exception e) {
           isBroken = true;
           e.printStackTrace();
           logger.error(e.getMessage(), e);
         }
-        return new Long(0);
+        return result;
       }
     }.run(redisFactory);
   }

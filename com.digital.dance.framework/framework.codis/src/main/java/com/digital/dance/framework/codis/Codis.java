@@ -7,6 +7,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public interface Codis extends Redis{
+    public String buildKey(String key);
+
     public Set<String> getKeysByPrefix(String prefix);
     public Integer getKeysCountByPrefix(String prefix);
     public void delKeysByPrefix(String prefix);
