@@ -236,7 +236,7 @@ public class CodisImpl implements Codis {
 
         boolean isBroken = false;
         try {
-          return keys(prefix + "*", jds );
+          return keys("*" + prefix + "*", jds );
 
         } catch (Exception e) {
           isBroken = true;
@@ -278,7 +278,7 @@ public class CodisImpl implements Codis {
       keys = ((Jedis)jds).keys( pattern );
       delkeys = new String[keys != null ? keys.size() : 0];
 
-      ((Jedis)jds).del(keys.toArray(delkeys));
+      ( (Jedis)jds ).del( keys.toArray(delkeys) );
 
       return delkeys;
     } else if( !(jds instanceof JedisCluster) ){
@@ -286,24 +286,24 @@ public class CodisImpl implements Codis {
     }
     Map<String, List<String>> map = new HashMap<>(6600);
     Map<String, JedisPool> clusterNodes = ( (JedisCluster)jds ).getClusterNodes();
-    for(String k : clusterNodes.keySet()){
+    for( String k : clusterNodes.keySet() ){
       logger.debug("Getting keys from: " + k );
       JedisPool jp = clusterNodes.get(k);
       Jedis jedis = null;
       try {
         jedis = jp.getResource();
         if (!jedis.info("replication").contains("role:slave")) {
-          Set<String> nodeKeys = jedis.keys(pattern);
-          if (nodeKeys != null && (nodeKeys.size() > 0)) {
+          Set<String> nodeKeys = jedis.keys( pattern );
+          if ( nodeKeys != null && ( nodeKeys.size() > 0 ) ) {
 
             keys.addAll(nodeKeys);
-            for (String key : nodeKeys){
+            for ( String key : nodeKeys ){
 
-              Integer slot = JedisClusterCRC16.getSlot(key);
-              if ( map.containsKey(slot.toString()) ) {
-                map.get(slot.toString()).add(key);
+              Integer slot = JedisClusterCRC16.getSlot( key );
+              if ( map.containsKey( slot.toString() ) ) {
+                map.get( slot.toString() ).add(key);
               } else {
-                map.put(slot.toString(), Lists.newArrayList(key));
+                map.put( slot.toString(), Lists.newArrayList(key) );
               }
 
             }
@@ -311,25 +311,25 @@ public class CodisImpl implements Codis {
           }
         }
       } catch(Exception e){
-        logger.error("Getting keys error: {}", e);
+        logger.error( "Getting keys error: {}", e );
       } finally{
-        logger.debug("jedis closed.");
-        if (jedis != null) jedis.close();//用完一定要close这个链接！！！
+        logger.debug("jedis closed." );
+        if ( jedis != null ) jedis.close();//用完一定要close这个链接！！！
       }
 
     }
     for (String slotItem : map.keySet()) {
       List<String> slotKeys = map.get(slotItem);
       try {
-        ( (JedisCluster)jds ).del(slotKeys.toArray(new String[slotKeys.size()]));
-        logger.debug( "slotItem:" + slotItem + ",del '" + slotKeys.size() + "'" + slotKeys.toString());
+        ( (JedisCluster)jds ).del( slotKeys.toArray( new String[ slotKeys.size() ] ) );
+        logger.debug( "slotItem:" + slotItem + ",del '" + slotKeys.size() + "'" + slotKeys.toString() );
       } catch (Exception ex) {
-        logger.error( "slotItem:" + slotItem + ",del '" + slotKeys.size() + "' error: {}", ex);
+        logger.error( "slotItem:" + slotItem + ",del '" + slotKeys.size() + "' error: {}", ex );
       }
     }
-    logger.debug("Keys gotten from JedisCluster!");
-    delkeys = new String[keys != null ? keys.size() : 0];
-    return keys.toArray(delkeys);
+    logger.debug("Keys deleted from JedisCluster!");
+    delkeys = new String[ keys != null ? keys.size() : 0 ];
+    return keys.toArray( delkeys );
   }
 
   public String[] delClusterKeys( JedisCommands jds, String... keys ){
