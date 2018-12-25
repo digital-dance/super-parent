@@ -35,6 +35,7 @@ public class SSOLoginManageHelper implements InitializingBean {
 	public static final String CAS_SESSION_ID = "CasSessionId";
 	public static final String SECURITY_DES = "security_des";
 	public static final String WEB_SITE_CODE = "webSiteCode";
+	public static final String WEB_QUERY_STRING = "querystring";
 
 	public <T> T getSessionInfo(String sessionId, Class<T> clazz) {
 		String key = USER_SESSION_KEY_CACHE + sessionId;

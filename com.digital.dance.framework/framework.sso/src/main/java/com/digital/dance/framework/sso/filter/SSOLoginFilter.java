@@ -1,6 +1,6 @@
 package com.digital.dance.framework.sso.filter;
 
-import com.digital.dance.framework.infrastructure.commons.HttpClientUtil;
+import com.digital.dance.framework.infrastructure.commons.*;
 import com.digital.dance.framework.sso.entity.LoginInfo;
 import com.digital.dance.framework.sso.entity.LoginedSessionList;
 import com.digital.dance.framework.sso.enums.ClientTypeEnums;
@@ -14,9 +14,6 @@ import com.digital.dance.commons.exception.BizException;
 import com.digital.dance.commons.security.utils.RSACoderUtil;
 import com.digital.dance.commons.serialize.json.utils.JSONUtils;
 import com.digital.dance.framework.codis.utils.CodisUtil;
-import com.digital.dance.framework.infrastructure.commons.Constants;
-import com.digital.dance.framework.infrastructure.commons.Log;
-import com.digital.dance.framework.infrastructure.commons.ResponseVo;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -255,9 +252,16 @@ public class SSOLoginFilter implements Filter {
 			
 			ResponseVo responsedata = new ResponseVo();
 			String loginUrl = "";
+			String queryString = request.getQueryString();
+			if( !StringTools.isEmpty( queryString ) ){
+				queryString = URLEncoder.encode( request.getQueryString(), "UTF-8");
+			} else {
+				queryString = "";
+			}
 			
 			try {
-				loginUrl = casLoginurl + "?" + SSOLoginManageHelper.BIZ_URL + "=" + getAuthWebBizurl(request, clientType);
+				loginUrl = casLoginurl + "?" + SSOLoginManageHelper.BIZ_URL + "=" + getAuthWebBizurl( request, clientType )
+						+ "&" + SSOLoginManageHelper.WEB_QUERY_STRING + "=" + queryString;
 				if( ( StringUtils.isBlank( request.getServletPath() ) || "/index.html".equalsIgnoreCase( request.getServletPath() ) ) && StringUtils.isNotEmpty(homePageUrl)){
 					loginUrl = homePageUrl;
 				}
