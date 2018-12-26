@@ -262,7 +262,7 @@ public class SSOLoginFilter implements Filter {
 			try {
 				loginUrl = casLoginurl + "?" + SSOLoginManageHelper.BIZ_URL + "=" + getAuthWebBizurl( request, clientType )
 						+ "&" + SSOLoginManageHelper.WEB_QUERY_STRING + "=" + queryString;
-				if( ( StringUtils.isBlank( request.getServletPath() ) || "/index.html".equalsIgnoreCase( request.getServletPath() ) ) && StringUtils.isNotEmpty(homePageUrl)){
+				if( ( StringUtils.isBlank( request.getRequestURI() ) || "/index.html".equalsIgnoreCase( request.getRequestURI() ) ) && StringUtils.isNotEmpty(homePageUrl)){
 					loginUrl = homePageUrl;
 				}
 				logger.info("sendRedirect loginUrl:" + loginUrl);
