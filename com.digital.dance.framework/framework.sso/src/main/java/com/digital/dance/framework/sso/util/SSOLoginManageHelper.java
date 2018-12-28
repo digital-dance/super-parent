@@ -1,13 +1,17 @@
 package com.digital.dance.framework.sso.util;
 
-import org.springframework.beans.factory.InitializingBean;
+import com.digital.dance.framework.infrastructure.commons.*;
 
 import com.digital.dance.commons.security.utils.RSACoderUtil;
 import com.digital.dance.framework.codis.Codis;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 //import com.digital.dance.framework.redis.Redis;
 
 
-public class SSOLoginManageHelper implements InitializingBean {
+public class SSOLoginManageHelper implements
+		ApplicationListener<ContextRefreshedEvent> {
+	private static Log logger = new Log(SSOLoginManageHelper.class);
 	private Codis redis;
 	private String casLoginurl;
 	private String casErrorUrl;
@@ -289,11 +293,27 @@ public class SSOLoginManageHelper implements InitializingBean {
 		this.webSiteCode = webSiteCode;
 	}
 
+//	@Override
+//	public void afterPropertiesSet() throws Exception {
+//		String pubKey = (String)RSACoderUtil.getKey().get(RSACoderUtil.public_Key);
+//		this.saveCacheData(webSiteCode, SSOLoginManageHelper.PUB_KEY, pubKey);
+//
+//	}
+	/**
+	 * 当一个ApplicationContext被初始化或刷新触发
+	 */
 	@Override
-	public void afterPropertiesSet() throws Exception {
-		String pubKey = (String)RSACoderUtil.getKey().get(RSACoderUtil.public_Key);
-		this.saveCacheData(webSiteCode, SSOLoginManageHelper.PUB_KEY, pubKey);
-		
-	}
+	public void onApplicationEvent(ContextRefreshedEvent event) {
+		if (event.getApplicationContext().getParent() == null) {//root application context 没有parent.
+			String pubKey = null;
+			try {
+				pubKey = (String) RSACoderUtil.getKey().get(RSACoderUtil.public_Key);
+				this.saveCacheData(webSiteCode, SSOLoginManageHelper.PUB_KEY, pubKey);
+			} catch (Exception e) {
+				logger.error("onApplicationEvent:"+e.getMessage(), e);
+				e.printStackTrace();
+			}
 
+		}
+	}
 }
