@@ -72,7 +72,12 @@ public class RedisFactory implements InitializingBean, DisposableBean {
 	public Jedis getJedis() {
 		Jedis jedis = null;
 		try {
-			jedis = getPool().getResource();
+
+			JedisPool jedisPool = getPool();
+			if( jedisPool != null ){
+				jedis = getPool().getResource();
+			}
+
 		} catch (JedisConnectionException e) {
 			String message = StringUtils.trimWhitespace(e.getMessage());
 			if("Could not get a resource from the pool".equalsIgnoreCase(message)){
@@ -131,7 +136,9 @@ public class RedisFactory implements InitializingBean, DisposableBean {
 	}
 
 	private void initPool() {
-
+		if ( StringUtils.isEmpty( this.proxyHost ) || StringUtils.isEmpty( this.port ) ) {
+			return;
+		}
 		if (this.jedisPool == null) {
 			if ( StringUtils.isEmpty(this.authpassword) ) {
 				jedisPool = new JedisPool(config, proxyHost, port, timeout == 0 ? DEFAULT_TIMEOUT : timeout);
@@ -145,7 +152,7 @@ public class RedisFactory implements InitializingBean, DisposableBean {
 	}
 
 	public void afterPropertiesSet() throws Exception {
-		if ((this.proxyHost == null) || (this.port == null) || config == null) {
+		if ( ( (this.proxyHost == null) || (this.port == null) || ( config == null ) ) && StringUtils.isEmpty( nodes ) ) {
 			throw new ApplicationException("this.host == null || this.port == null || this.port == config");
 		}
 		initPool();
