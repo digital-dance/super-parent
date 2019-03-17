@@ -17,6 +17,7 @@ public class SSOLoginManageHelper implements
 	private String casErrorUrl;
 	private String apiLoginUrl;
 
+	private String privilegeCacheServiceUrl;
 	private String loginServiceUrl;
 	private String securitySalt;
 	private String webSiteCode;
@@ -40,6 +41,14 @@ public class SSOLoginManageHelper implements
 	public static final String SECURITY_DES = "security_des";
 	public static final String WEB_SITE_CODE = "webSiteCode";
 	public static final String WEB_QUERY_STRING = "querystring";
+
+	public String getPrivilegeCacheServiceUrl() {
+		return privilegeCacheServiceUrl;
+	}
+
+	public void setPrivilegeCacheServiceUrl(String privilegeCacheServiceUrl) {
+		this.privilegeCacheServiceUrl = privilegeCacheServiceUrl;
+	}
 
 	public <T> T getSessionInfo(String sessionId, Class<T> clazz) {
 		String key = USER_SESSION_KEY_CACHE + sessionId;
