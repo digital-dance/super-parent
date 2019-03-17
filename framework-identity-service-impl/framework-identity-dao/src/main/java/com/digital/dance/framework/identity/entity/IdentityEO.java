@@ -29,10 +29,10 @@ public class IdentityEO extends IdentityServiceBaseEO implements Serializable {
 	}
 
 	/**
-	 * @param system
+	 * @param seqName
 	 *            the system to set
 	 */
-	public void setSeqName(String system) {
+	public void setSeqName(String seqName) {
 		this.seqName = system + "_" + subSys + "_" + module + "_" + table;
 	}
 	/**
