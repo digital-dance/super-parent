@@ -24,7 +24,8 @@ public class IdentityEO extends IdentityServiceBaseEO implements Serializable {
 	 * @return the system
 	 */
 	public String getSeqName() {
-		this.seqName = system + "_" + subSys + "_" + module + "_" + table;
+		this.seqName = (system == null ? "" : system) + "_" + (subSys == null ? "" : subSys)
+				+ "_" + (module == null ? "" : module) + "_" + (table == null ? "" : table);
 		return this.seqName;
 	}
 
@@ -33,7 +34,12 @@ public class IdentityEO extends IdentityServiceBaseEO implements Serializable {
 	 *            the system to set
 	 */
 	public void setSeqName(String seqName) {
-		this.seqName = system + "_" + subSys + "_" + module + "_" + table;
+		this.seqName = seqName;
+	}
+
+	public void generateSeqName() {
+		this.seqName = (system == null ? "" : system) + "_" + (subSys == null ? "" : subSys)
+				+ "_" + (module == null ? "" : module) + "_" + (table == null ? "" : table);
 	}
 	/**
 	 * @return the id
@@ -63,6 +69,7 @@ public class IdentityEO extends IdentityServiceBaseEO implements Serializable {
 	 */
 	public void setSystem(String system) {
 		this.system = system;
+		generateSeqName();
 	}
 
 	/**
@@ -78,6 +85,7 @@ public class IdentityEO extends IdentityServiceBaseEO implements Serializable {
 	 */
 	public void setSubSys(String subSys) {
 		this.subSys = subSys;
+		generateSeqName();
 	}
 
 	/**
@@ -93,6 +101,7 @@ public class IdentityEO extends IdentityServiceBaseEO implements Serializable {
 	 */
 	public void setModule(String module) {
 		this.module = module;
+		generateSeqName();
 	}
 
 	/**
@@ -108,6 +117,7 @@ public class IdentityEO extends IdentityServiceBaseEO implements Serializable {
 	 */
 	public void setTable(String table) {
 		this.table = table;
+		generateSeqName();
 	}
 
 	/**
