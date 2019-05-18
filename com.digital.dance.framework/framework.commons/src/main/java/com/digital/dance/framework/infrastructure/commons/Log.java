@@ -1,6 +1,8 @@
 package com.digital.dance.framework.infrastructure.commons;
 
-import org.apache.commons.logging.LogFactory;
+//import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -9,15 +11,16 @@ import org.apache.commons.logging.LogFactory;
  */
 public class Log {
 
-	org.apache.commons.logging.Log log = null;
+	Logger log = null;
+//	org.apache.commons.logging.Log log = null;
 
 	@SuppressWarnings("rawtypes")
 	public Log(Class clazz) {
-		log = LogFactory.getLog(clazz);
+		log = LoggerFactory.getLogger(clazz);
 	}
 	
 	public Log(String name) {
-		log = LogFactory.getLog(name);
+		log = LoggerFactory.getLogger(name);
 	}
 
 	/**
@@ -25,7 +28,7 @@ public class Log {
 	 * @param arg0
 	 */
 	public void debug(Object arg0) {
-		log.debug(arg0);
+		log.debug( GsonUtils.toJsonStr(arg0) );
 	}
 
 	/**
@@ -34,7 +37,7 @@ public class Log {
 	 * @param arg1
 	 */
 	public void debug(Object arg0, Throwable arg1) {
-		log.debug(arg0, arg1);
+		log.debug(GsonUtils.toJsonStr(arg0), arg1);
 	}
 
 	/**
@@ -42,7 +45,7 @@ public class Log {
 	 * @param arg0
 	 */
 	public void info(Object arg0) {
-		log.info(arg0);
+		log.info(GsonUtils.toJsonStr(arg0));
 	}
 
 	/**
@@ -51,7 +54,7 @@ public class Log {
 	 * @param arg1
 	 */
 	public void info(Object arg0, Throwable arg1) {
-		log.info(arg0, arg1);
+		log.info(GsonUtils.toJsonStr(arg0), arg1);
 	}
 
 	/**
@@ -59,7 +62,7 @@ public class Log {
 	 * @param arg0
 	 */
 	public void warn(Object arg0) {
-		log.warn(arg0);
+		log.warn(GsonUtils.toJsonStr(arg0));
 	}
 
 	/**
@@ -68,7 +71,7 @@ public class Log {
 	 * @param arg1
 	 */
 	public void warn(Object arg0, Throwable arg1) {
-		log.warn(arg0, arg1);
+		log.warn(GsonUtils.toJsonStr(arg0), arg1);
 	}
 
 	/**
@@ -76,7 +79,7 @@ public class Log {
 	 * @param arg0
 	 */
 	public void error(Object arg0) {
-		log.error(arg0);
+		log.error(GsonUtils.toJsonStr(arg0));
 	}
 
 	/**
@@ -85,7 +88,7 @@ public class Log {
 	 * @param arg1
 	 */
 	public void error(Object arg0, Throwable arg1) {
-		log.error(arg0, arg1);
+		log.error(GsonUtils.toJsonStr(arg0), arg1);
 	}
 
 	/**
@@ -93,7 +96,7 @@ public class Log {
 	 * @param arg0
 	 */
 	public void fatal(Object arg0) {
-		log.fatal(arg0);
+		log.error(GsonUtils.toJsonStr(arg0));
 	}
 
 	/**
@@ -102,7 +105,7 @@ public class Log {
 	 * @param arg1
 	 */
 	public void fatal(Object arg0, Throwable arg1) {
-		log.fatal(arg0, arg1);
+		log.error(GsonUtils.toJsonStr(arg0), arg1);
 	}
 	
 	public Boolean isDebugEnabled(){
@@ -122,7 +125,7 @@ public class Log {
 	}
 
 	public Boolean isFatalEnabled(){
-		return log.isFatalEnabled();
+		return log.isErrorEnabled();
 	}	
 
 	public Boolean isTraceEnabled(){
