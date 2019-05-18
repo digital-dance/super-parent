@@ -1,6 +1,7 @@
 package com.digital.dance.framework.sso.filter;
 
 import com.digital.dance.framework.infrastructure.commons.*;
+import com.digital.dance.framework.infrastructure.commons.constants.FrameworkConstants;
 import com.digital.dance.framework.sso.entity.LoginInfo;
 import com.digital.dance.framework.sso.entity.LoginedSessionList;
 import com.digital.dance.framework.sso.enums.ClientTypeEnums;
@@ -469,27 +470,30 @@ public class SSOLoginFilter implements Filter {
 	}
 
 	public static LoginInfo getLoginInfoFromSession(HttpServletRequest request) {
-		HttpSession appSession = request.getSession();
-		Object loginInfo = (appSession != null) ? appSession.getAttribute("login_info") : null;
-		if(loginInfo == null)return null;
-		return (LoginInfo)loginInfo;
+//		HttpSession appSession = request.getSession();
+//		Object loginInfo = (appSession != null) ? appSession.getAttribute(FrameworkConstants.LOGIN_INFO) : null;
+//		if(loginInfo == null)return null;
+//		return (LoginInfo)loginInfo;
+		return SessionManager.getLoginInfoFromSession( request );
 	}
 
 	public static void setLoginInfo2Session(HttpServletRequest request, Object loginInfo) {
 		HttpSession appSession = request.getSession();
-		if(appSession != null) appSession.setAttribute("login_info", loginInfo);
+		if(appSession != null) appSession.setAttribute(FrameworkConstants.LOGIN_INFO, loginInfo);
 	}
 
 	public static <T extends Object> T getFromSession(HttpServletRequest request, String key) {
-		HttpSession appSession = request.getSession();
-		Object object = (appSession != null) ? appSession.getAttribute(key) : null;
-		if(object == null)return null;
-		return (T)object;
+//		HttpSession appSession = request.getSession();
+//		Object object = (appSession != null) ? appSession.getAttribute(key) : null;
+//		if(object == null)return null;
+//		return (T)object;
+		return SessionManager.getFromSession( request, key );
 	}
 
 	public static <T extends Object> void save2Session(HttpServletRequest request, String key, T t) {
-		HttpSession appSession = request.getSession();
-		if(appSession != null) appSession.setAttribute(key, t);
+//		HttpSession appSession = request.getSession();
+//		if(appSession != null) appSession.setAttribute(key, t);
+		SessionManager.save2Session( request, key, t );
 	}
 
 	public void destroy() {
