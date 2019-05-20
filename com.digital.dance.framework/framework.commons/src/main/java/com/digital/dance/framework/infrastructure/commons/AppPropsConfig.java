@@ -1,12 +1,12 @@
 package com.digital.dance.framework.infrastructure.commons;
 
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.springframework.core.io.Resource;
 import java.util.Map.Entry;
-import java.io.IOException;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 
 import com.digital.dance.framework.infrastructure.commons.Log;
 
@@ -120,4 +120,47 @@ public class AppPropsConfig {
 		return getPropertyValue(propertyKey) != null ? getPropertyValue(propertyKey) : defaultV;
 	}
 
+	public static Map<Object, Object> getProperties(String pClassPath, Class pClass){
+		InputStream iStream = pClass.getClassLoader().getResourceAsStream(pClassPath);
+		Map<Object, Object> map = getProperties( iStream );
+		return map;
+	}
+
+	public static Map<Object, Object> getProperties(String pPropertiesFilePath){
+		InputStream iStream = null;
+		Map<Object, Object> map = null;
+		try {
+			iStream = new BufferedInputStream(new FileInputStream(new File(pPropertiesFilePath)));
+			map = getProperties( iStream );
+		} catch (FileNotFoundException e) {
+			String exJson = GsonUtils.toJsonStr(e);
+			logger.error(exJson);
+		}
+		return map;
+	}
+
+	public static Map<Object, Object> getProperties(InputStream pInputStream){
+		Map<Object, Object> map = new HashMap<>();
+		Properties cfgProperties = new Properties();
+		try {
+			cfgProperties.load(pInputStream);
+			for (Map.Entry e : cfgProperties.entrySet()) {
+				map.put( e.getKey(), e.getValue() );
+			}
+
+		} catch (IOException e) {
+			String exJson = GsonUtils.toJsonStr(e);
+			logger.error(exJson);
+		} finally {
+			if( pInputStream != null ){
+				try {
+					pInputStream.close();
+				} catch (IOException e) {
+					String exJson = GsonUtils.toJsonStr(e);
+					logger.error(exJson);
+				}
+			}
+		}
+		return map;
+	}
 }
