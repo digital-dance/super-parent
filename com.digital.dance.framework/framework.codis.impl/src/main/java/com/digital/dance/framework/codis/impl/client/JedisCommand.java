@@ -1,9 +1,9 @@
 package com.digital.dance.framework.codis.impl.client;
 
 import com.digital.dance.base.exception.utils.AssertUtil;
-import com.digital.dance.framework.codis.client.RedisFactory;
+import com.digital.dance.framework.codis.client.SuperRedisFactory;
 import com.digital.dance.framework.codis.client.callback.RedisCommand;
-import com.digital.dance.framework.infrastructure.commons.Log;
+import com.digital.dance.framework.codis.impl.Log;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
@@ -14,7 +14,7 @@ public abstract class JedisCommand<T> implements RedisCommand<T> {
     private static final Log logger = new Log(JedisCommand.class);
 
     @Override
-    public T run(RedisFactory redisFactory) {
+    public T run(SuperRedisFactory redisFactory) {
         AssertUtil.assertNotNull(redisFactory, "redis factory not set");
         Jedis jedis = null;
         JedisCluster jedisCluster = null;

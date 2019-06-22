@@ -1,6 +1,6 @@
 package com.digital.dance.framework.redis;
 
-import com.digital.dance.framework.redis.client.listener.MessageListener;
+//import com.digital.dance.framework.redis.client.listener.MessageListener;
 import redis.clients.jedis.BinaryJedisPubSub;
 
 public abstract interface Redis

@@ -1,14 +1,11 @@
 package com.digital.dance.framework.codis.impl;
 
 import com.digital.dance.framework.codis.Codis;
-import com.digital.dance.framework.codis.client.RedisFactory;
+import com.digital.dance.framework.codis.StringUtils;
+import com.digital.dance.framework.codis.client.SuperRedisFactory;
 import com.digital.dance.framework.codis.impl.client.JedisCommand;
-import com.digital.dance.framework.infrastructure.commons.GsonUtils;
-import com.digital.dance.framework.infrastructure.commons.Log;
-import com.digital.dance.framework.infrastructure.commons.StringTools;
 
 import com.google.common.collect.Lists;
-import org.springframework.data.redis.core.TimeoutUtils;
 import redis.clients.jedis.*;
 import redis.clients.util.JedisClusterCRC16;
 
@@ -18,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 public class CodisImpl implements Codis {
 
   private static final Log logger = new Log(CodisImpl.class);
-  private RedisFactory redisFactory;
+  private SuperRedisFactory redisFactory;
   private String salt;
 
   public String buildKey(String key){
@@ -223,7 +220,7 @@ public class CodisImpl implements Codis {
     this.salt = salt;
   }
 
-  public void setRedisFactory(RedisFactory redisFactory)
+  public void setRedisFactory(SuperRedisFactory redisFactory)
   {
     this.redisFactory = redisFactory;
   }
@@ -444,10 +441,10 @@ public class CodisImpl implements Codis {
 //            delByKey(keys);
 //          }
           if( delKeys != null ) i = delKeys.length;
-          logger.debug(StringTools.format(" [%s] redis key: del成功" , i));
+          logger.debug(StringUtils.format(" [%s] redis key: del成功" , i));
         } catch (Exception e) {
           isBroken = true;
-          logger.error(StringTools.format( " [%s] redis key: del失败" , i), e);
+          logger.error(StringUtils.format( " [%s] redis key: del失败" , i), e);
           e.printStackTrace();
         }
         return delKeys;

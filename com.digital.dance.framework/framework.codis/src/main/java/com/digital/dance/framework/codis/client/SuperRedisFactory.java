@@ -3,11 +3,11 @@ package com.digital.dance.framework.codis.client;
 import com.digital.dance.framework.codis.Log;
 import com.digital.dance.base.exception.ApplicationException;
 
-import org.springframework.util.StringUtils;
+import com.digital.dance.framework.codis.StringUtils;
 import redis.clients.jedis.*;
 
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
+//import org.springframework.beans.factory.DisposableBean;
+//import org.springframework.beans.factory.InitializingBean;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import java.util.Arrays;
@@ -15,8 +15,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class RedisFactory implements InitializingBean, DisposableBean {
-	private static final Log logger = new Log(RedisFactory.class);
+public class SuperRedisFactory {//implements InitializingBean, DisposableBean {
+	private static final Log logger = new Log(SuperRedisFactory.class);
 	private JedisPool jedisPool;
 	private String proxyHost;
 	private Integer port;
@@ -32,17 +32,17 @@ public class RedisFactory implements InitializingBean, DisposableBean {
 
 	private String nodes;
 
-	public RedisFactory() {
+	public SuperRedisFactory() {
 	}
 
-	public RedisFactory(String host, String subSysName) {
+	public SuperRedisFactory(String host, String subSysName) {
 		this.proxyHost = host;
 		this.subSysName = subSysName;
 	}
 
 	public JedisPool getPool() {
 		if (this.jedisPool == null) {
-			synchronized (RedisFactory.class) {
+			synchronized (SuperRedisFactory.class) {
 				if (this.jedisPool == null) {
 					initPool();
 				}
@@ -79,7 +79,7 @@ public class RedisFactory implements InitializingBean, DisposableBean {
 			}
 
 		} catch (JedisConnectionException e) {
-			String message = StringUtils.trimWhitespace(e.getMessage());
+			String message = org.apache.commons.lang.StringUtils.trim(e.getMessage());
 			if("Could not get a resource from the pool".equalsIgnoreCase(message)){
 				System.out.println("++++++++++请检查你的redis服务++++++++");
 				System.out.println("|①.请检查是否安装redis服务，如果没安装，Windos 请参考Blog：http://www.sojson.com/blog/110.html|");
@@ -136,27 +136,19 @@ public class RedisFactory implements InitializingBean, DisposableBean {
 	}
 
 	private void initPool() {
-		if ( StringUtils.isEmpty( this.proxyHost ) || StringUtils.isEmpty( this.port ) ) {
+		if ( StringUtils.isEmpty( this.proxyHost ) || ( ( null == this.port ) || ( 0 >= this.port ) ) ) {
 			return;
 		}
 		if (this.jedisPool == null) {
 			if ( StringUtils.isEmpty(this.authpassword) ) {
 				jedisPool = new JedisPool(config, proxyHost, port, timeout == 0 ? DEFAULT_TIMEOUT : timeout);
-			} else if( "".equals(StringUtils.trimAllWhitespace(this.authpassword)) ) {
+			} else if( "".equals(StringUtils.trim(this.authpassword)) ) {
 				jedisPool = new JedisPool(config, proxyHost, port, timeout == 0 ? DEFAULT_TIMEOUT : timeout);
 			} else {
 				jedisPool = new JedisPool(config, proxyHost, port, timeout == 0 ? DEFAULT_TIMEOUT : timeout, authpassword);
 			}
 
 		}
-	}
-
-	public void afterPropertiesSet() throws Exception {
-		if ( ( (this.proxyHost == null) || (this.port == null) || ( config == null ) ) && StringUtils.isEmpty( nodes ) ) {
-			throw new ApplicationException("this.host == null || this.port == null || this.port == config");
-		}
-		initPool();
-		logger.debug("init codis connection jedisPool success after properties set.");
 	}
 
 	/**
@@ -168,7 +160,7 @@ public class RedisFactory implements InitializingBean, DisposableBean {
 		String nodeListStr = getNodes();
 		if(StringUtils.isEmpty(nodeListStr)){
 			return null;
-		} else if ("".equals(StringUtils.trimAllWhitespace(nodeListStr))){
+		} else if ("".equals(StringUtils.trim(nodeListStr))){
 			return null;
 		}
 
@@ -226,7 +218,7 @@ public class RedisFactory implements InitializingBean, DisposableBean {
 		this.config = config;
 	}
 
-	@Override
+//	@Override
 	public void destroy() throws Exception {
 		if (this.jedisPool != null) {
 			if (!this.jedisPool.isClosed()) {
@@ -234,5 +226,13 @@ public class RedisFactory implements InitializingBean, DisposableBean {
 			}
 			this.jedisPool.destroy();
 		}
+	}
+
+	public void afterPropertiesSet() throws Exception {
+		if ( ( (this.proxyHost == null) || (this.port == null) || ( config == null ) ) && StringUtils.isEmpty( nodes ) ) {
+			throw new ApplicationException("( (this.proxyHost == null) || (this.port == null) || ( config == null ) ) && StringUtils.isEmpty( nodes ) ");
+		}
+		initPool();
+		logger.debug("init codis connection jedisPool success after properties set.");
 	}
 }
