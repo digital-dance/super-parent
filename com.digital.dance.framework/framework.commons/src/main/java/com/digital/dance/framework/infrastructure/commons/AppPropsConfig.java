@@ -120,8 +120,8 @@ public class AppPropsConfig {
 		return getPropertyValue(propertyKey) != null ? getPropertyValue(propertyKey) : defaultV;
 	}
 
-	public static Map<Object, Object> getProperties(String pClassPath, Class pClass){
-		InputStream iStream = pClass.getClassLoader().getResourceAsStream(pClassPath);
+	public static Map<Object, Object> getProperties(String pResourceName, Class pClass){
+		InputStream iStream = pClass.getClassLoader().getResourceAsStream(pResourceName);
 		Map<Object, Object> map = getProperties( iStream );
 		return map;
 	}
