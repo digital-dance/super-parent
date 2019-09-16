@@ -163,4 +163,59 @@ public class AppPropsConfig {
 		}
 		return map;
 	}
+
+	public static Map<String, String> getStrProperties(String pResourceName, Class pClass){
+		/**
+		 * // 对应package下的文件
+		 * input = this.getClass().getResourceAsStream("resources/dbconfig.properties");
+		 * // 对应resources下的文件
+		 input = this.getClass().getResourceAsStream("/dbconfig.properties");
+		 */
+
+		InputStream iStream = pClass.getClassLoader().getResourceAsStream(pResourceName);
+		Map<String, String> map = getStrProperties( iStream );
+		return map;
+	}
+
+	public static Map<String, String> getStrProperties(String pPropertiesFilePath){
+		InputStream iStream = null;
+		Map<String, String> map = null;
+		try {
+			iStream = new BufferedInputStream(new FileInputStream(new File(pPropertiesFilePath)));
+			map = getStrProperties( iStream );
+		} catch (FileNotFoundException e) {
+			String exJson = GsonUtils.toJsonStr(e);
+			logger.error( exJson );
+		}
+		return map;
+	}
+
+	public static Map<String, String> getStrProperties(InputStream pInputStream){
+		Map<String, String> map = new HashMap<>();
+		Properties cfgProperties = new Properties();
+		try {
+			cfgProperties.load(pInputStream);
+			for (Entry e : cfgProperties.entrySet()) {
+				Object keyObj = e.getKey();
+				Object valueObj = e.getValue();
+				if( keyObj != null && keyObj instanceof String)
+					map.put( (String) keyObj, (String) valueObj );
+			}
+
+		} catch (IOException e) {
+			String exJson = GsonUtils.toJsonStr(e);
+			logger.error( exJson );
+		} finally {
+			if( pInputStream != null ){
+				try {
+					pInputStream.close();
+				} catch (IOException e) {
+					String exJson = GsonUtils.toJsonStr(e);
+					logger.error( exJson );
+				}
+			}
+		}
+		return map;
+	}
+
 }
