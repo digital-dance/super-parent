@@ -7,6 +7,29 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 public class SessionManager {
+
+    protected static SessionPullService sessionPullService;
+    protected static SessionPushService sessionPushService;
+
+    public static <SessionObj extends Object>  LoginInfo getLoginInfoFromSession(SessionObj appSession) {
+
+        if( sessionPullService == null && ( appSession instanceof HttpSession ) ){
+            sessionPullService = new SessionPullService<LoginInfo, HttpSession>(){
+
+                @Override
+                public LoginInfo getAttribute(String key, HttpSession httpSession) {
+
+                    Object loginInfo = (httpSession != null) ? httpSession.getAttribute( FrameworkConstants.LOGIN_INFO ) : null;
+                    if(loginInfo == null)return null;
+                    return (LoginInfo)loginInfo;
+                }
+            };
+        }
+        Object loginInfo = (appSession != null) ? sessionPullService.getAttribute( FrameworkConstants.LOGIN_INFO, appSession ) : null;
+        if(loginInfo == null)return null;
+        return (LoginInfo)loginInfo;
+    }
+
     public static LoginInfo getLoginInfoFromSession(HttpServletRequest request) {
         HttpSession appSession = request.getSession();
 //        Object loginInfo = (appSession != null) ? appSession.getAttribute("login_info") : null;
@@ -32,4 +55,5 @@ public class SessionManager {
         HttpSession appSession = request.getSession();
         if(appSession != null) appSession.setAttribute(key, t);
     }
+
 }
